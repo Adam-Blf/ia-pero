@@ -4,6 +4,7 @@ Frontend immersif theme bar clandestin annees 1920
 Enhanced with: History, Filters, SBERT Search, Analytics, Export PDF
 """
 import sys
+import re
 import time
 import json
 import logging
@@ -821,7 +822,11 @@ def render_cocktail_card(recipe: dict, characteristics: dict, cached: bool = Fal
 
         # Preparation section
         st.markdown("### 🍸 Preparation")
-        st.markdown(f"*{instructions}*")
+        # Format instructions with line breaks for each step
+        formatted_instructions = re.sub(r'(\d+\.)', r'\n\1', instructions).strip()
+        for line in formatted_instructions.split('\n'):
+            if line.strip():
+                st.markdown(f"*{line.strip()}*")
 
         st.divider()
 
