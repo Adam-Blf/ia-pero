@@ -15,8 +15,8 @@ from sentence_transformers import SentenceTransformer, util
 # CONFIGURATION
 # =============================================================================
 MODEL_NAME = "all-MiniLM-L6-v2"
-COCKTAIL_KEYWORDS = ["cocktail", "alcool", "fête", "boisson", "goût"]
-RELEVANCE_THRESHOLD = 0.25
+COCKTAIL_KEYWORDS = ["cocktail", "alcool", "boisson", "mojito", "whisky", "rhum", "vodka", "gin", "bière", "vin", "apéritif", "digestif", "bar", "barman", "shaker"]
+RELEVANCE_THRESHOLD = 0.35
 CACHE_FILE = Path("data/recipe_cache.json")
 
 
