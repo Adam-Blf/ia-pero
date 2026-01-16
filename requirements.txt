@@ -12,3 +12,6 @@ transformers>=4.34.0
 # Utilities
 numpy>=1.23
 pandas>=2.0
+
+# Visualization
+plotly>=5.18.0

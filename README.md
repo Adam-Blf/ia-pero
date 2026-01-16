@@ -15,6 +15,8 @@ Explorez la similarite semantique entre vos textes grace aux embeddings Sentence
 - [x] Matrice de similarite interactive
 - [x] Detection des paires les plus similaires
 - [x] **Backend RAG avec Guardrail semantique**
+- [x] **Interface Speakeasy** (theme bar clandestin annees 1920)
+- [x] **Graphique Radar Plotly** (profil gustatif)
 - [ ] Upload de fichiers CSV/TXT
 - [ ] Visualisation t-SNE/UMAP
 
@@ -41,7 +43,11 @@ pip install -r requirements.txt
 ## Usage
 
 ```bash
+# Interface Similarite Semantique
 streamlit run app.py
+
+# Interface Speakeasy (Cocktails)
+streamlit run src/app.py
 ```
 
 L'application sera disponible sur http://localhost:8501
@@ -55,6 +61,7 @@ L'application sera disponible sur http://localhost:8501
 - **Transformers** >= 4.34.0 - HuggingFace models
 - **Pandas** - Data manipulation
 - **NumPy** - Numerical operations
+- **Plotly** >= 5.18.0 - Graphiques interactifs (radar chart)
 
 ## Models disponibles
 
@@ -89,12 +96,13 @@ recipe = generate_recipe("mojito frais")
 
 ```
 ia-pero/
-├── app.py                    # Main Streamlit application
+├── app.py                    # Streamlit app (Similarite Semantique)
 ├── requirements.txt          # Python dependencies
 ├── .gitignore
 ├── README.md
 ├── src/
 │   ├── __init__.py
+│   ├── app.py               # Streamlit app (Speakeasy Cocktails)
 │   ├── embeddings.py        # SBERT logic
 │   ├── backend.py           # RAG engine & guardrail
 │   └── utils.py             # Utility functions
@@ -109,6 +117,12 @@ ia-pero/
 
 ### 2026-01-16
 
+- **Interface Speakeasy** : `src/app.py`
+  - Theme bar clandestin annees 1920 (noir/or)
+  - CSS custom injecte via `st.markdown(unsafe_allow_html=True)`
+  - Graphique radar Plotly (profil gustatif)
+  - Gestion des etats (empty, loading, error, success)
+  - Affichage conditionnel selon status backend
 - **Backend RAG & Guardrail** : `src/backend.py`
   - `check_relevance()` : Guardrail semantique (seuil 0.25)
   - `generate_recipe()` : Generation avec cache JSON
