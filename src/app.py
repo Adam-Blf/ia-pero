@@ -648,25 +648,26 @@ def render_control_tabs():
 # UI COMPONENTS
 # =============================================================================
 def render_header():
-    """Render Speakeasy header with Art Deco logo and title."""
-    # Inline SVG logo for Art Deco cocktail glass
-    logo_svg = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="80" height="80" style="margin-right: 1.5rem;">
-      <defs><linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" style="stop-color:#FFD700"/><stop offset="50%" style="stop-color:#D4AF37"/>
-        <stop offset="100%" style="stop-color:#B8860B"/></linearGradient></defs>
-      <circle cx="100" cy="100" r="95" fill="#0D0D0D" stroke="url(#gold)" stroke-width="3"/>
-      <path d="M100 20 L100 40" stroke="url(#gold)" stroke-width="2"/>
-      <path d="M100 160 L100 180" stroke="url(#gold)" stroke-width="2"/>
-      <path d="M20 100 L40 100" stroke="url(#gold)" stroke-width="2"/>
-      <path d="M160 100 L180 100" stroke="url(#gold)" stroke-width="2"/>
-      <path d="M70 60 L130 60 L105 120 L105 150 L120 150 L120 160 L80 160 L80 150 L95 150 L95 120 Z"
-            fill="none" stroke="url(#gold)" stroke-width="3" stroke-linejoin="round"/>
-      <path d="M78 75 L122 75 L107 115 L93 115 Z" fill="url(#gold)" opacity="0.6"/>
-      <circle cx="100" cy="85" r="8" fill="#D4AF37"/>
-      <path d="M30 30 L50 30 L50 35 L35 35 L35 50 L30 50 Z" fill="url(#gold)"/>
-      <path d="M170 30 L150 30 L150 35 L165 35 L165 50 L170 50 Z" fill="url(#gold)"/>
-      <path d="M30 170 L50 170 L50 165 L35 165 L35 150 L30 150 Z" fill="url(#gold)"/>
-      <path d="M170 170 L150 170 L150 165 L165 165 L165 150 L170 150 Z" fill="url(#gold)"/>
+    """Render Speakeasy header with Art Deco martini logo and title."""
+    # Elegant Art Deco martini glass logo
+    logo_svg = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="75" height="75" style="margin-right: 1.2rem;">
+      <defs><linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#FFD700"/><stop offset="50%" stop-color="#D4AF37"/>
+        <stop offset="100%" stop-color="#B8860B"/></linearGradient></defs>
+      <circle cx="60" cy="60" r="56" fill="#0D0D0D" stroke="url(#goldGrad)" stroke-width="2.5"/>
+      <path d="M20 20 L32 20 L32 23 L23 23 L23 32 L20 32 Z" fill="url(#goldGrad)"/>
+      <path d="M100 20 L88 20 L88 23 L97 23 L97 32 L100 32 Z" fill="url(#goldGrad)"/>
+      <path d="M20 100 L32 100 L32 97 L23 97 L23 88 L20 88 Z" fill="url(#goldGrad)"/>
+      <path d="M100 100 L88 100 L88 97 L97 97 L97 88 L100 88 Z" fill="url(#goldGrad)"/>
+      <path d="M38 35 L82 35 L60 70 L60 90 L50 90 L50 70 Z" fill="none" stroke="url(#goldGrad)" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M44 42 L76 42 L60 62 Z" fill="url(#goldGrad)" opacity="0.4"/>
+      <line x1="50" y1="38" x2="70" y2="55" stroke="url(#goldGrad)" stroke-width="1.5"/>
+      <circle cx="52" cy="40" r="4" fill="#D4AF37"/>
+      <path d="M45 90 L75 90" stroke="url(#goldGrad)" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="60" y1="12" x2="60" y2="18" stroke="url(#goldGrad)" stroke-width="1.5"/>
+      <line x1="60" y1="102" x2="60" y2="108" stroke="url(#goldGrad)" stroke-width="1.5"/>
+      <line x1="12" y1="60" x2="18" y2="60" stroke="url(#goldGrad)" stroke-width="1.5"/>
+      <line x1="102" y1="60" x2="108" y2="60" stroke="url(#goldGrad)" stroke-width="1.5"/>
     </svg>'''
 
     st.markdown(f"""
