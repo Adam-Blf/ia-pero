@@ -49,8 +49,7 @@ SURPRISE_QUERIES = [
 st.set_page_config(
     page_title="L'IA Pero | Speakeasy",
     page_icon="🥃",
-    layout="centered",
-    initial_sidebar_state="expanded",
+    layout="wide",
 )
 
 
@@ -75,31 +74,13 @@ SPEAKEASY_CSS = """
     visibility: hidden;
 }
 
-/* ----- Sidebar Styling ----- */
-[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #0D0D0D 0%, #1A1A1A 100%);
-    border-right: 1px solid rgba(212, 175, 55, 0.3);
-}
-
-[data-testid="stSidebar"] h1,
-[data-testid="stSidebar"] h2,
-[data-testid="stSidebar"] h3 {
-    color: #D4AF37 !important;
-    font-family: 'Playfair Display', serif !important;
-}
-
-[data-testid="stSidebar"] p,
-[data-testid="stSidebar"] span,
-[data-testid="stSidebar"] label {
-    color: #F5E6C8 !important;
-    font-family: 'Cormorant Garamond', serif !important;
-}
-
-/* Sidebar selectbox styling */
-[data-testid="stSidebar"] .stSelectbox > div > div {
-    background: rgba(26, 26, 26, 0.9) !important;
-    border: 1px solid #D4AF37 !important;
-    color: #F5E6C8 !important;
+/* ----- Panel Styling ----- */
+.main-panel {
+    background: linear-gradient(180deg, rgba(13, 13, 13, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin: 1rem 0;
 }
 
 /* ----- Typography ----- */
@@ -577,22 +558,16 @@ def generate_cocktail_characteristics(recipe_name: str) -> dict:
 
 
 # =============================================================================
-# SIDEBAR COMPONENTS
+# CONTROL PANEL (Main page - no sidebar)
 # =============================================================================
-def render_sidebar():
-    """Render sidebar with history, filters, search, and metrics."""
-    with st.sidebar:
-        st.markdown("## 🥃 Le Carnet du Bar")
+def render_filters_panel():
+    """Render filters section on main page."""
+    with st.expander("⚙️ **Filtres & Options**", expanded=False):
+        col1, col2, col3 = st.columns(3)
 
-        # =========================
-        # FILTERS SECTION
-        # =========================
-        st.markdown("### Filtres Avances")
-
-        col1, col2 = st.columns(2)
         with col1:
             alcohol = st.selectbox(
-                "Type",
+                "Type de boisson",
                 ["Tous", "Avec Alcool", "Sans Alcool"],
                 key="filter_alcohol"
             )
@@ -602,12 +577,12 @@ def render_sidebar():
                 ["Tous", "Facile", "Moyen", "Expert"],
                 key="filter_difficulty"
             )
-
-        prep_time = st.selectbox(
-            "Temps de preparation",
-            ["Tous", "< 5 min", "5-10 min", "> 10 min"],
-            key="filter_prep_time"
-        )
+        with col3:
+            prep_time = st.selectbox(
+                "Temps de preparation",
+                ["Tous", "< 5 min", "5-10 min", "> 10 min"],
+                key="filter_prep_time"
+            )
 
         st.session_state.filters = {
             "alcohol": alcohol,
@@ -615,14 +590,20 @@ def render_sidebar():
             "prep_time": prep_time,
         }
 
-        st.divider()
+        # Jazz toggle
+        jazz_enabled = st.checkbox("🎷 Activer musique jazz", value=False, key="jazz_toggle")
 
-        # =========================
-        # SBERT SEARCH SECTION
-        # =========================
-        st.markdown("### Recherche dans la Cave")
-        st.caption("600 cocktails indexes par SBERT")
+        if jazz_enabled:
+            st.markdown("""
+                <audio autoplay loop>
+                    <source src="https://stream.zeno.fm/0r0xa792kwzuv" type="audio/mpeg">
+                </audio>
+            """, unsafe_allow_html=True)
 
+
+def render_search_panel():
+    """Render SBERT search section on main page."""
+    with st.expander("🔍 **Recherche dans la Cave** (600 cocktails)", expanded=False):
         search_query = st.text_input(
             "Rechercher...",
             placeholder="mojito, tropical, amer...",
@@ -636,73 +617,48 @@ def render_sidebar():
 
             if results:
                 for r in results:
-                    with st.expander(f"**{r['name']}** ({r['similarity']}%)"):
-                        st.write(r["description"][:200] + "...")
+                    st.markdown(f"**{r['name']}** - {r['similarity']}% de similarite")
+                    st.caption(r["description"][:150] + "...")
+                    st.divider()
             else:
                 st.caption("Aucun resultat trouve")
 
-        st.divider()
 
-        # =========================
-        # HISTORY SECTION
-        # =========================
-        st.markdown("### Historique des Creations")
+def render_history_metrics_panel():
+    """Render history and metrics section on main page."""
+    col1, col2 = st.columns(2)
 
-        if st.session_state.history:
-            for i, item in enumerate(st.session_state.history[:5]):
-                col1, col2 = st.columns([4, 1])
-                with col1:
+    with col1:
+        with st.expander("📜 **Historique**", expanded=False):
+            if st.session_state.history:
+                for i, item in enumerate(st.session_state.history[:5]):
                     if st.button(
-                        f"🍸 {item['name'][:20]}...",
+                        f"🍸 {item['name'][:25]}... ({item['timestamp']})",
                         key=f"history_{i}",
                         use_container_width=True
                     ):
                         st.session_state.selected_history = item
                         st.rerun()
-                with col2:
-                    st.caption(item["timestamp"])
-        else:
-            st.caption("*Aucune creation encore...*")
+            else:
+                st.caption("*Aucune creation encore...*")
 
-        st.divider()
+    with col2:
+        with st.expander("📊 **Metriques**", expanded=False):
+            metrics = st.session_state.metrics
 
-        # =========================
-        # METRICS SECTION
-        # =========================
-        st.markdown("### Metriques de Session")
-
-        metrics = st.session_state.metrics
-
-        col1, col2 = st.columns(2)
-        with col1:
-            st.metric("Requetes", metrics["total_requests"])
-        with col2:
-            cache_rate = 0
-            if metrics["total_requests"] > 0:
-                cache_rate = round(metrics["cache_hits"] / metrics["total_requests"] * 100)
-            st.metric("Cache Hit", f"{cache_rate}%")
-
-        avg_time = 0
-        if metrics["total_requests"] > 0:
-            avg_time = round(metrics["total_time"] / metrics["total_requests"] * 1000)
-        st.metric("Temps moyen", f"{avg_time} ms")
-
-        st.divider()
-
-        # =========================
-        # AMBIENT SOUND (Optional)
-        # =========================
-        st.markdown("### Ambiance Sonore")
-
-        jazz_enabled = st.checkbox("Activer musique jazz", value=False, key="jazz_toggle")
-
-        if jazz_enabled:
-            st.markdown("""
-                <audio autoplay loop>
-                    <source src="https://stream.zeno.fm/0r0xa792kwzuv" type="audio/mpeg">
-                </audio>
-                <p style="font-size: 0.8rem; color: #666;">Radio Jazz en streaming</p>
-            """, unsafe_allow_html=True)
+            m1, m2, m3 = st.columns(3)
+            with m1:
+                st.metric("Requetes", metrics["total_requests"])
+            with m2:
+                cache_rate = 0
+                if metrics["total_requests"] > 0:
+                    cache_rate = round(metrics["cache_hits"] / metrics["total_requests"] * 100)
+                st.metric("Cache", f"{cache_rate}%")
+            with m3:
+                avg_time = 0
+                if metrics["total_requests"] > 0:
+                    avg_time = round(metrics["total_time"] / metrics["total_requests"] * 1000)
+                st.metric("Temps", f"{avg_time}ms")
 
 
 # =============================================================================
@@ -871,11 +827,15 @@ def main():
     # Inject CSS first
     inject_speakeasy_css()
 
-    # Render sidebar
-    render_sidebar()
-
     # Render header
     render_header()
+
+    # Control panels (filters, search, history, metrics)
+    render_filters_panel()
+    render_search_panel()
+    render_history_metrics_panel()
+
+    st.markdown('<div class="art-deco-divider">&#9670;</div>', unsafe_allow_html=True)
 
     # Check for history selection
     if st.session_state.selected_history:
