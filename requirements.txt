@@ -16,6 +16,10 @@ pandas>=2.0
 # Visualization
 plotly>=5.18.0
 
+# GenAI - Google Gemini
+google-generativeai>=0.3.0
+python-dotenv>=1.0.0
+
 # Testing
 pytest>=8.0.0
 pytest-playwright>=0.4.0
