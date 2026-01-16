@@ -14,6 +14,7 @@ Explorez la similarite semantique entre vos textes grace aux embeddings Sentence
 - [x] Support de plusieurs modeles SBERT
 - [x] Matrice de similarite interactive
 - [x] Detection des paires les plus similaires
+- [x] **Backend RAG avec Guardrail semantique**
 - [ ] Upload de fichiers CSV/TXT
 - [ ] Visualisation t-SNE/UMAP
 
@@ -63,6 +64,27 @@ L'application sera disponible sur http://localhost:8501
 | `all-mpnet-base-v2` | 768 | Meilleure qualite |
 | `paraphrase-multilingual-MiniLM-L12-v2` | 384 | Support multilingue |
 
+## Backend RAG & Guardrail
+
+Le module `src/backend.py` fournit un systeme de guardrail semantique :
+
+```python
+from src.backend import check_relevance, generate_recipe
+
+# Verification de pertinence (guardrail)
+result = check_relevance("Je veux un mojito")
+# {"status": "ok", "similarity": 0.27}
+
+result = check_relevance("Quelle heure est-il ?")
+# {"status": "error", "message": "Desole, le barman ne comprend que les commandes de boissons !"}
+
+# Generation de recette avec cache JSON
+recipe = generate_recipe("mojito frais")
+# {"status": "ok", "recipe": {...}, "cached": False}
+```
+
+**Seuil de pertinence** : 0.25 (similarite cosinus avec les mots-cles cocktail)
+
 ## Project Structure
 
 ```
@@ -74,9 +96,11 @@ ia-pero/
 ├── src/
 │   ├── __init__.py
 │   ├── embeddings.py        # SBERT logic
+│   ├── backend.py           # RAG engine & guardrail
 │   └── utils.py             # Utility functions
 ├── data/
-│   └── .gitkeep
+│   ├── .gitkeep
+│   └── recipe_cache.json    # Recipe cache (auto-generated)
 └── .streamlit/
     └── config.toml          # Theme configuration
 ```
@@ -84,6 +108,11 @@ ia-pero/
 ## Changelog
 
 ### 2026-01-16
+
+- **Backend RAG & Guardrail** : `src/backend.py`
+  - `check_relevance()` : Guardrail semantique (seuil 0.25)
+  - `generate_recipe()` : Generation avec cache JSON
+  - Cache LRU pour le modele SBERT
 - Initial project setup
 - Streamlit interface with SBERT integration
 - Similarity matrix visualization
