@@ -1,6 +1,6 @@
 # Architecture & Guide du Code - L'IA Pero
 
-Ce document explique où trouver chaque fonctionnalité dans le code.
+Ce document explique ou trouver chaque fonctionnalite dans le code.
 
 ## Vue d'Ensemble
 
@@ -29,37 +29,36 @@ ia-pero/
 |--------|---------|-------------|
 | 1-27 | **Imports & Config** | Imports Python, logging, constantes |
 | 29-44 | **Constantes** | Chemins CSV, fichier analytics, requetes surprise |
-| 46-54 | **Page Config** | Configuration Streamlit (titre, icone, layout) |
-| 60-322 | **CSS Theme** | Styles CSS Speakeasy annees 1920 |
-| 328-346 | **Session State** | Initialisation: history, metrics, filters |
-| 352-397 | **Analytics** | Logging des requetes, metriques session |
-| 402-457 | **Recherche SBERT** | Recherche semantique dans les 600 cocktails |
-| 463-503 | **Export PDF** | Generation du fichier texte telechargeable |
-| 517-576 | **Radar Chart** | Graphique Plotly profil gustatif |
-| 582-706 | **Sidebar** | Filtres, recherche, historique, metriques, son |
-| 711-784 | **Input Hybride** | Champ texte + dropdown budget + surprise |
-| 796-847 | **Cocktail Card** | Affichage recette, ingredients, radar, export |
-| 866-971 | **Main App** | Point d'entree, orchestration de l'UI |
+| 46-53 | **Page Config** | Configuration Streamlit (titre, icone, layout wide) |
+| 56-302 | **CSS Theme** | Styles CSS Speakeasy annees 1920 |
+| 308-327 | **Session State** | Initialisation: history, metrics, filters |
+| 332-378 | **Analytics** | Logging des requetes, metriques session |
+| 383-438 | **Recherche SBERT** | Recherche semantique dans les 600 cocktails |
+| 443-484 | **Export PDF** | Generation du fichier texte telechargeable |
+| 498-541 | **Radar Chart** | Graphique Plotly profil gustatif |
+| 560-661 | **Control Panels** | Filtres, recherche SBERT, historique, metriques |
+| 667-765 | **UI Components** | Header, input hybride, cards, empty state |
+| 822-940 | **Main App** | Point d'entree, orchestration de l'UI |
 
 ### Ou Trouver...
 
-| Fonctionnalite | Fichier | Ligne | Fonction |
-|----------------|---------|-------|----------|
-| **Theme CSS Speakeasy** | app.py | 60 | `SPEAKEASY_CSS` |
-| **Couleurs Or/Noir** | app.py | 62-65 | Commentaire palette |
-| **Historique des recettes** | app.py | 648-665 | Dans `render_sidebar()` |
-| **Filtres (Alcool/Difficulte)** | app.py | 590-616 | Dans `render_sidebar()` |
-| **Recherche SBERT** | app.py | 620-642 | Dans `render_sidebar()` |
-| **Metriques de session** | app.py | 672-688 | Dans `render_sidebar()` |
-| **Musique jazz** | app.py | 695-705 | Dans `render_sidebar()` |
-| **Champ texte envie** | app.py | 738-743 | Dans `render_cocktail_input()` |
-| **Dropdown Budget** | app.py | 751-762 | Dans `render_cocktail_input()` |
-| **Bouton Surprise** | app.py | 775-778 | Dans `render_cocktail_input()` |
-| **Affichage ingredients** | app.py | 816-818 | Dans `render_cocktail_card()` |
-| **Etapes preparation** | app.py | 823-829 | Dans `render_cocktail_card()` |
-| **Graphique radar** | app.py | 833-836 | Dans `render_cocktail_card()` |
-| **Bouton telecharger** | app.py | 840-847 | Dans `render_cocktail_card()` |
-| **Footer auteurs** | app.py | 974-987 | `render_footer()` |
+| Fonctionnalite | Fichier | Fonction |
+|----------------|---------|----------|
+| **Theme CSS Speakeasy** | app.py | `SPEAKEASY_CSS` |
+| **Couleurs Or/Noir** | app.py | Commentaire palette dans CSS |
+| **Filtres (Alcool/Difficulte/Temps)** | app.py | `render_filters_panel()` |
+| **Recherche SBERT** | app.py | `render_search_panel()` |
+| **Historique des recettes** | app.py | `render_history_metrics_panel()` |
+| **Metriques de session** | app.py | `render_history_metrics_panel()` |
+| **Musique jazz** | app.py | `render_filters_panel()` |
+| **Champ texte envie** | app.py | `render_cocktail_input()` |
+| **Dropdown Budget** | app.py | `render_cocktail_input()` |
+| **Bouton Surprise** | app.py | `render_cocktail_input()` |
+| **Affichage ingredients** | app.py | `render_cocktail_card()` |
+| **Etapes preparation** | app.py | `render_cocktail_card()` |
+| **Graphique radar** | app.py | `render_cocktail_card()` |
+| **Bouton telecharger** | app.py | `render_cocktail_card()` |
+| **Footer auteurs** | app.py | `render_footer()` |
 
 ---
 
@@ -111,8 +110,9 @@ ia-pero/
                             ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                      src/app.py                                  │
+│  render_filters_panel() → Capture filtres (alcool, difficulte)  │
 │  render_cocktail_input() → Capture envie + budget + surprise    │
-│  main() → Enrichit query avec filtres sidebar                   │
+│  main() → Enrichit query avec filtres                           │
 └───────────────────────────┬─────────────────────────────────────┘
                             │
                             ▼
@@ -160,16 +160,16 @@ ia-pero/
 ## Points d'Extension
 
 ### Ajouter un nouveau filtre
-1. Ajouter le selectbox dans `render_sidebar()` (app.py:590-616)
+1. Ajouter le selectbox dans `render_filters_panel()` (app.py)
 2. Stocker dans `st.session_state.filters`
-3. Ajouter la logique dans `main()` (app.py:904-913)
+3. Ajouter la logique dans `main()` (section filter_context)
 
 ### Modifier le prompt Gemini
 1. Editer `SPEAKEASY_PROMPT` (backend.py:94-113)
 2. Ajuster le format JSON attendu si necessaire
 
 ### Ajouter une dimension au radar
-1. Ajouter dans `generate_cocktail_characteristics()` (app.py:563-576)
+1. Ajouter dans `generate_cocktail_characteristics()` (app.py)
 2. Ajouter dans `taste_required` (backend.py:206)
 3. Ajouter dans `SPEAKEASY_PROMPT` (backend.py:107)
 
