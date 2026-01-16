@@ -1,0 +1,14 @@
+# L'IA Pero - Dependencies
+# Validated via Context7 documentation
+
+# Core
+streamlit>=1.35,<2.0
+sentence-transformers>=2.2.0,<3.0
+
+# SBERT dependencies (Context7: Python 3.9+, PyTorch 1.11.0+, transformers v4.34.0+)
+torch>=2.0.0
+transformers>=4.34.0
+
+# Utilities
+numpy>=1.23
+pandas>=2.0
