@@ -417,8 +417,13 @@ def render_header():
     """, unsafe_allow_html=True)
 
 
-def render_cocktail_input() -> str:
-    """Render styled input field and return user query."""
+def render_cocktail_input() -> tuple[str, str]:
+    """
+    Render hybrid questionnaire: text input + budget dropdown.
+
+    Returns:
+        tuple: (query, budget) - The user's cocktail request and selected budget
+    """
     st.markdown("""
         <p style="text-align: center; font-size: 1.2rem; margin-bottom: 1rem;">
             <em>Chuchotez votre envie au barman...</em>
@@ -428,11 +433,32 @@ def render_cocktail_input() -> str:
     col1, col2, col3 = st.columns([1, 4, 1])
 
     with col2:
+        # Text input for free-form cocktail request
         query = st.text_input(
             label="Votre commande",
             placeholder="Un cocktail fruite et rafraichissant...",
             label_visibility="collapsed",
             key="cocktail_query"
+        )
+
+        # Budget dropdown (structured data - RNCP requirement)
+        st.markdown("""
+            <p style="font-size: 0.95rem; color: #A89968; margin: 0.8rem 0 0.3rem 0;">
+                <em>Votre budget pour ce soir ?</em>
+            </p>
+        """, unsafe_allow_html=True)
+
+        budget = st.selectbox(
+            label="Budget",
+            options=[
+                "Economique (< 8€)",
+                "Modere (8-15€)",
+                "Premium (15-25€)",
+                "Luxe (> 25€)"
+            ],
+            index=1,  # Default: Modere
+            label_visibility="collapsed",
+            key="budget_select"
         )
 
         submitted = st.button(
@@ -442,8 +468,8 @@ def render_cocktail_input() -> str:
         )
 
     if submitted and query:
-        return query
-    return ""
+        return query, budget
+    return "", ""
 
 
 def render_error_message(message: str):
@@ -515,14 +541,16 @@ def main():
     # Render header
     render_header()
 
-    # Get user input
-    query = render_cocktail_input()
+    # Get user input (hybrid questionnaire: text + budget dropdown)
+    query, budget = render_cocktail_input()
 
     # Handle states
     if query:
+        # Enrich query with budget context for better recommendations
+        enriched_query = f"{query} (budget: {budget})"
         # Loading state with custom spinner
         with st.spinner("Le barman prepare votre creation..."):
-            result = generate_recipe(query)
+            result = generate_recipe(enriched_query)
 
         # Error state
         if result["status"] == "error":
@@ -552,10 +580,16 @@ def main():
         # Empty state
         render_empty_state()
 
-    # Footer
+    # Footer with authors and disclaimer
     st.markdown("""
         <div class="art-deco-divider" style="margin-top: 3rem;">&#9670;</div>
-        <p style="text-align: center; color: #A89968; font-size: 0.9rem;">
+        <p style="text-align: center; color: #D4AF37; font-size: 0.85rem; margin-bottom: 0.5rem;">
+            <strong>Cree par Adam Beloucif & Amina Medjdoub</strong>
+        </p>
+        <p style="text-align: center; color: #A89968; font-size: 0.8rem;">
+            <em>RNCP Bloc 2 - Expert en Ingenierie de Donnees</em>
+        </p>
+        <p style="text-align: center; color: #666; font-size: 0.75rem; margin-top: 1rem;">
             <em>L'abus d'alcool est dangereux pour la sante</em>
         </p>
     """, unsafe_allow_html=True)

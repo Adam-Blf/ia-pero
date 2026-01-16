@@ -17,7 +17,8 @@ Application de recommandation de cocktails utilisant NLP semantique (SBERT) et g
 - [x] Detection des paires les plus similaires
 - [x] **Backend RAG avec Guardrail semantique**
 - [x] **Interface Speakeasy** (theme bar clandestin annees 1920)
-- [x] **Graphique Radar Plotly** (profil gustatif)
+- [x] **Questionnaire Hybride** (texte libre + dropdown Budget)
+- [x] **Graphique Radar Plotly** (profil gustatif 7 dimensions)
 - [x] **Generation GenAI** (Google Gemini)
 - [x] **Cache JSON** (optimisation des couts API)
 - [x] **600 cocktails** dans la base de donnees
@@ -79,6 +80,23 @@ Le seuil de pertinence du guardrail (similarite cosinus minimale) a ete calibre 
 | **Qualite generation** | gemini-1.5-flash produit du JSON structure fiable |
 | **Latence** | ~1-2s pour generation complete |
 | **Fallback** | Mode offline avec recettes pre-generees si API indisponible |
+
+### Pourquoi Questionnaire Hybride ?
+
+L'interface combine **texte libre** et **donnees structurees** (critere RNCP obligatoire) :
+
+| Element | Type | Justification |
+|---------|------|---------------|
+| **Envie** | Texte libre | Capture la creativite et les nuances ("fruite", "rafraichissant") |
+| **Budget** | Dropdown | Donnee structuree, filtrage efficace, UX guidee |
+
+**Options Budget** :
+- Economique (< 8€)
+- Modere (8-15€)
+- Premium (15-25€)
+- Luxe (> 25€)
+
+La requete enrichie `{envie} (budget: {selection})` est envoyee au backend RAG.
 
 ## Installation
 
