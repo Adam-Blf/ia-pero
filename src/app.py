@@ -455,36 +455,41 @@ def render_error_message(message: str):
 
 def render_cocktail_card(recipe: dict, characteristics: dict, cached: bool = False):
     """Render cocktail result with radar chart."""
-    cached_badge = '<span class="cached-badge">Du Cellier</span>' if cached else ''
+    # Build HTML components
+    name = recipe.get("name", "Cocktail Mystere")
+    cached_badge = ' <span class="cached-badge">Du Cellier</span>' if cached else ''
+    instructions = recipe.get("instructions", "Melanger avec elegance...")
 
-    # Build ingredients HTML
-    ingredients_html = "".join([
-        f'<li class="ingredient-item">{ing}</li>'
-        for ing in recipe.get("ingredients", [])
+    # Build ingredients list
+    ingredients = recipe.get("ingredients", [])
+    ingredients_items = "\n".join([
+        f'                <li class="ingredient-item">{ing}</li>'
+        for ing in ingredients
     ])
 
-    st.markdown(f"""
-        <div class="cocktail-card">
-            <h2 class="cocktail-name">{recipe.get("name", "Cocktail Mystere")}{cached_badge}</h2>
+    # Build complete HTML block (single st.markdown call for proper rendering)
+    card_html = f'''<div class="cocktail-card">
+    <h2 class="cocktail-name">{name}{cached_badge}</h2>
 
-            <div class="cocktail-section-title">Ingredients</div>
-            <ul class="ingredient-list">
-                {ingredients_html}
-            </ul>
+    <div class="cocktail-section-title">Ingredients</div>
+    <ul class="ingredient-list">
+{ingredients_items}
+    </ul>
 
-            <div class="cocktail-section-title">Preparation</div>
-            <p class="instructions-text">{recipe.get("instructions", "Melanger avec elegance...")}</p>
-        </div>
-    """, unsafe_allow_html=True)
+    <div class="cocktail-section-title">Preparation</div>
+    <p class="instructions-text">{instructions}</p>
+</div>'''
+
+    st.markdown(card_html, unsafe_allow_html=True)
 
     # Radar chart section
     st.markdown(
-        '<div class="cocktail-section-title" style="text-align: center;">Profil Gustatif</div>',
+        '<div class="cocktail-section-title" style="text-align: center; margin-top: 2rem;">Profil Gustatif</div>',
         unsafe_allow_html=True
     )
 
     fig = create_radar_chart(characteristics)
-    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+    st.plotly_chart(fig, config={'displayModeBar': False}, key="radar_chart")
 
 
 def render_empty_state():
