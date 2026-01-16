@@ -1,4 +1,24 @@
-# Python
+# =============================================================================
+# L'IA Pero - .gitignore
+# Projet RNCP Bloc 2 - Expert en Ingenierie de Donnees
+# =============================================================================
+
+# =============================================================================
+# SECRETS & API KEYS (CRITIQUE - Ne jamais commit)
+# =============================================================================
+.env
+.env.*
+!.env.example
+*.local
+secrets.toml
+**/secrets/
+credentials.json
+*.pem
+*.key
+
+# =============================================================================
+# PYTHON
+# =============================================================================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -19,40 +39,142 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
+pip-log.txt
+pip-delete-this-directory.txt
 
-# Virtual environments
+# =============================================================================
+# VIRTUAL ENVIRONMENTS
+# =============================================================================
 .venv/
 venv/
 ENV/
 env/
+.conda/
+*.virtualenv
 
-# Environment variables
-.env
-.env.local
-*.local
+# =============================================================================
+# ML MODELS & CACHE (Fichiers volumineux)
+# =============================================================================
+# SBERT / HuggingFace models
+.cache/
+models/
+sentence-transformers/
+transformers_cache/
+huggingface/
 
-# IDE
+# PyTorch / TensorFlow
+*.pt
+*.pth
+*.onnx
+*.h5
+*.pb
+*.tflite
+*.safetensors
+
+# Pickles et binaires ML
+*.pkl
+*.pickle
+*.bin
+*.npy
+*.npz
+
+# =============================================================================
+# IDE & EDITORS
+# =============================================================================
 .idea/
 .vscode/
 *.swp
 *.swo
 *~
+*.sublime-project
+*.sublime-workspace
+.project
+.pydevproject
+.settings/
+*.code-workspace
 
-# Streamlit
+# =============================================================================
+# STREAMLIT
+# =============================================================================
 .streamlit/secrets.toml
 
-# Model cache (can be large)
-.cache/
-models/
+# =============================================================================
+# TESTING
+# =============================================================================
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
 
-# Data files (if sensitive)
-*.pkl
-*.pt
-*.bin
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
 
-# OS
-.DS_Store
-Thumbs.db
+# =============================================================================
+# LOGS & DEBUGGING
+# =============================================================================
+*.log
+logs/
+*.out
+*.err
+debug/
+tmp/
+temp/
 
-# Jupyter
+# =============================================================================
+# JUPYTER NOTEBOOKS
+# =============================================================================
 .ipynb_checkpoints/
+*.ipynb_checkpoints
+profile_default/
+ipython_config.py
+
+# =============================================================================
+# OS FILES
+# =============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+nul
+
+# Linux
+*~
+.fuse_hidden*
+.Trash-*
+.nfs*
+
+# =============================================================================
+# DOCUMENTATION BUILD
+# =============================================================================
+docs/_build/
+site/
+public/
+
+# =============================================================================
+# MISC
+# =============================================================================
+*.bak
+*.backup
+*.tmp
+*.temp
+.scratch/
+scratch/
+
+# Claude Code
+.claude/
