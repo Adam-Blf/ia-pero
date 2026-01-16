@@ -562,7 +562,7 @@ def generate_cocktail_characteristics(recipe_name: str) -> dict:
 # =============================================================================
 def render_filters_panel():
     """Render filters section on main page."""
-    with st.expander("⚙️ **Filtres & Options**", expanded=False):
+    with st.expander("⚙️ Filtres & Options", expanded=False):
         col1, col2, col3 = st.columns(3)
 
         with col1:
@@ -603,7 +603,7 @@ def render_filters_panel():
 
 def render_search_panel():
     """Render SBERT search section on main page."""
-    with st.expander("🔍 **Recherche dans la Cave** (600 cocktails)", expanded=False):
+    with st.expander("🔍 Recherche dans la Cave (600 cocktails)", expanded=False):
         search_query = st.text_input(
             "Rechercher...",
             placeholder="mojito, tropical, amer...",
@@ -629,7 +629,7 @@ def render_history_metrics_panel():
     col1, col2 = st.columns(2)
 
     with col1:
-        with st.expander("📜 **Historique**", expanded=False):
+        with st.expander("📜 Historique", expanded=False):
             if st.session_state.history:
                 for i, item in enumerate(st.session_state.history[:5]):
                     if st.button(
@@ -643,7 +643,7 @@ def render_history_metrics_panel():
                 st.caption("*Aucune creation encore...*")
 
     with col2:
-        with st.expander("📊 **Metriques**", expanded=False):
+        with st.expander("📊 Metriques", expanded=False):
             metrics = st.session_state.metrics
 
             m1, m2, m3 = st.columns(3)
