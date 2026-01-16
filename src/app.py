@@ -648,26 +648,18 @@ def render_control_tabs():
 # UI COMPONENTS
 # =============================================================================
 def render_header():
-    """Render Speakeasy header with Art Deco martini logo and title."""
-    # Elegant Art Deco martini glass logo
-    logo_svg = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="75" height="75" style="margin-right: 1.2rem;">
-      <defs><linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#FFD700"/><stop offset="50%" stop-color="#D4AF37"/>
-        <stop offset="100%" stop-color="#B8860B"/></linearGradient></defs>
-      <circle cx="60" cy="60" r="56" fill="#0D0D0D" stroke="url(#goldGrad)" stroke-width="2.5"/>
-      <path d="M20 20 L32 20 L32 23 L23 23 L23 32 L20 32 Z" fill="url(#goldGrad)"/>
-      <path d="M100 20 L88 20 L88 23 L97 23 L97 32 L100 32 Z" fill="url(#goldGrad)"/>
-      <path d="M20 100 L32 100 L32 97 L23 97 L23 88 L20 88 Z" fill="url(#goldGrad)"/>
-      <path d="M100 100 L88 100 L88 97 L97 97 L97 88 L100 88 Z" fill="url(#goldGrad)"/>
-      <path d="M38 35 L82 35 L60 70 L60 90 L50 90 L50 70 Z" fill="none" stroke="url(#goldGrad)" stroke-width="2.5" stroke-linejoin="round"/>
-      <path d="M44 42 L76 42 L60 62 Z" fill="url(#goldGrad)" opacity="0.4"/>
-      <line x1="50" y1="38" x2="70" y2="55" stroke="url(#goldGrad)" stroke-width="1.5"/>
-      <circle cx="52" cy="40" r="4" fill="#D4AF37"/>
-      <path d="M45 90 L75 90" stroke="url(#goldGrad)" stroke-width="2.5" stroke-linecap="round"/>
-      <line x1="60" y1="12" x2="60" y2="18" stroke="url(#goldGrad)" stroke-width="1.5"/>
-      <line x1="60" y1="102" x2="60" y2="108" stroke="url(#goldGrad)" stroke-width="1.5"/>
-      <line x1="12" y1="60" x2="18" y2="60" stroke="url(#goldGrad)" stroke-width="1.5"/>
-      <line x1="102" y1="60" x2="108" y2="60" stroke="url(#goldGrad)" stroke-width="1.5"/>
+    """Render Speakeasy header with minimalist martini logo and title."""
+    # Clean minimalist martini glass logo
+    logo_svg = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="70" height="70" style="margin-right: 1rem;">
+      <defs><linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#B8860B"/></linearGradient></defs>
+      <circle cx="50" cy="50" r="47" fill="#0D0D0D" stroke="url(#gold)" stroke-width="2"/>
+      <path d="M30 25 L70 25 L50 55 L50 72" fill="none" stroke="url(#gold)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M40 72 L60 72" stroke="url(#gold)" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M38 76 L62 76" stroke="url(#gold)" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M35 30 L65 30 L50 50 Z" fill="url(#gold)" opacity="0.3"/>
+      <circle cx="55" cy="35" r="4" fill="#D4AF37"/>
+      <line x1="45" y1="28" x2="58" y2="38" stroke="url(#gold)" stroke-width="1.5"/>
     </svg>'''
 
     st.markdown(f"""
