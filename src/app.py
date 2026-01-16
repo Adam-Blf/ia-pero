@@ -454,39 +454,36 @@ def render_error_message(message: str):
 
 
 def render_cocktail_card(recipe: dict, characteristics: dict, cached: bool = False):
-    """Render cocktail result with radar chart."""
-    # Build HTML components
+    """Render cocktail result with radar chart using native Streamlit components."""
     name = recipe.get("name", "Cocktail Mystere")
-    cached_badge = ' <span class="cached-badge">Du Cellier</span>' if cached else ''
     instructions = recipe.get("instructions", "Melanger avec elegance...")
-
-    # Build ingredients list
     ingredients = recipe.get("ingredients", [])
-    ingredients_items = "\n".join([
-        f'                <li class="ingredient-item">{ing}</li>'
-        for ing in ingredients
-    ])
 
-    # Build complete HTML block (single st.markdown call for proper rendering)
-    card_html = f'''<div class="cocktail-card">
-    <h2 class="cocktail-name">{name}{cached_badge}</h2>
+    # Use native Streamlit container with custom styling
+    with st.container():
+        # Cocktail name header
+        if cached:
+            st.markdown(f"## 🥃 {name} <small style='color: #D4AF37; font-size: 0.5em;'>Du Cellier</small>", unsafe_allow_html=True)
+        else:
+            st.markdown(f"## 🥃 {name}")
 
-    <div class="cocktail-section-title">Ingredients</div>
-    <ul class="ingredient-list">
-{ingredients_items}
-    </ul>
+        st.divider()
 
-    <div class="cocktail-section-title">Preparation</div>
-    <p class="instructions-text">{instructions}</p>
-</div>'''
+        # Ingredients section
+        st.markdown("### 📜 Ingrédients")
+        for ing in ingredients:
+            st.markdown(f"- ◆ {ing}")
 
-    st.markdown(card_html, unsafe_allow_html=True)
+        st.divider()
 
-    # Radar chart section
-    st.markdown(
-        '<div class="cocktail-section-title" style="text-align: center; margin-top: 2rem;">Profil Gustatif</div>',
-        unsafe_allow_html=True
-    )
+        # Preparation section
+        st.markdown("### 🍸 Préparation")
+        st.markdown(f"*{instructions}*")
+
+        st.divider()
+
+        # Radar chart section
+        st.markdown("### 📊 Profil Gustatif")
 
     fig = create_radar_chart(characteristics)
     st.plotly_chart(fig, config={'displayModeBar': False}, key="radar_chart")
