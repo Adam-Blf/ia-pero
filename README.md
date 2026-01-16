@@ -90,7 +90,66 @@ recipe = generate_recipe("mojito frais")
 # {"status": "ok", "recipe": {...}, "cached": False}
 ```
 
-**Seuil de pertinence** : 0.25 (similarite cosinus avec les mots-cles cocktail)
+**Seuil de pertinence** : 0.35 (similarite cosinus avec les mots-cles cocktail)
+
+## Pour les Professeurs - Preuve de Robustesse
+
+Cette section demontre le fonctionnement du **guardrail semantique** qui rejette les requetes hors-sujet.
+
+### Lancer l'Application
+
+```bash
+# Activer l'environnement virtuel
+.venv\Scripts\activate  # Windows
+source .venv/bin/activate  # Linux/Mac
+
+# Lancer l'interface Speakeasy
+streamlit run src/app.py
+```
+
+L'application sera disponible sur <http://localhost:8501>
+
+### Tester le Guardrail Semantique
+
+#### Requetes REJETEES (hors-sujet)
+
+Essayez ces requetes pour voir le message d'erreur :
+
+| Requete | Resultat |
+| ------- | -------- |
+| "Comment reparer mon velo ?" | Message d'erreur |
+| "Quelle est la capitale de la France ?" | Message d'erreur |
+| "Quel temps fait-il ?" | Message d'erreur |
+| "Raconte-moi une blague" | Message d'erreur |
+
+**Message affiche** : "Desole, le barman ne comprend que les commandes de boissons !"
+
+#### Requetes ACCEPTEES (domaine cocktail)
+
+| Requete | Resultat |
+| ------- | -------- |
+| "Je veux un mojito" | Recette + Radar chart |
+| "Un cocktail fruite et rafraichissant" | Recette + Radar chart |
+| "Whisky sour" | Recette + Radar chart |
+| "Quelque chose avec du rhum" | Recette + Radar chart |
+
+### Tests Automatises (E2E)
+
+Des tests Playwright verifient automatiquement le guardrail :
+
+```bash
+# Installer Playwright (premiere fois)
+playwright install chromium
+
+# Lancer les tests
+pytest tests/test_guardrail.py -v
+```
+
+**Couverture des tests** :
+
+- `test_off_topic_query_shows_error` : Verifie qu'une requete hors-sujet affiche l'erreur
+- `test_cocktail_query_shows_recipe` : Verifie qu'une requete cocktail affiche la recette
+- `test_complete_flow` : Scenario complet (erreur puis succes)
 
 ## Project Structure
 
@@ -114,6 +173,14 @@ ia-pero/
 ```
 
 ## Changelog
+
+### 2026-01-16 (Audit Final)
+
+- **Documentation Professeurs** : Section dediee pour tester le guardrail
+  - Instructions de lancement detaillees
+  - Exemples de requetes rejetees vs acceptees
+  - Guide des tests E2E Playwright
+- **Correction** : Seuil de pertinence dans README (0.25 → 0.35)
 
 ### 2026-01-16
 
