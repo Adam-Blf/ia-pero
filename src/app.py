@@ -558,40 +558,41 @@ def generate_cocktail_characteristics(recipe_name: str) -> dict:
 
 
 # =============================================================================
-# CONTROL PANEL (Main page - no sidebar)
+# CONTROL PANEL (Main page with tabs)
 # =============================================================================
-def render_filters_panel():
-    """Render filters section on main page."""
-    with st.expander("Filtres & Options", expanded=False):
-        col1, col2, col3 = st.columns(3)
+def render_control_tabs():
+    """Render control tabs with filters, search, history, metrics."""
+    tab1, tab2, tab3 = st.tabs(["Filtres", "Recherche", "Stats"])
+
+    with tab1:
+        col1, col2, col3, col4 = st.columns(4)
 
         with col1:
             alcohol = st.selectbox(
-                "Type de boisson",
+                "Type",
                 ["Tous", "Avec Alcool", "Sans Alcool"],
                 key="filter_alcohol"
             )
         with col2:
             difficulty = st.selectbox(
-                "Difficulte",
+                "Niveau",
                 ["Tous", "Facile", "Moyen", "Expert"],
                 key="filter_difficulty"
             )
         with col3:
             prep_time = st.selectbox(
-                "Temps de preparation",
+                "Temps",
                 ["Tous", "< 5 min", "5-10 min", "> 10 min"],
                 key="filter_prep_time"
             )
+        with col4:
+            jazz_enabled = st.checkbox("Jazz", value=False, key="jazz_toggle")
 
         st.session_state.filters = {
             "alcohol": alcohol,
             "difficulty": difficulty,
             "prep_time": prep_time,
         }
-
-        # Jazz toggle
-        jazz_enabled = st.checkbox("🎷 Activer musique jazz", value=False, key="jazz_toggle")
 
         if jazz_enabled:
             st.markdown("""
@@ -600,10 +601,8 @@ def render_filters_panel():
                 </audio>
             """, unsafe_allow_html=True)
 
-
-def render_search_panel():
-    """Render SBERT search section on main page."""
-    with st.expander("Recherche dans la Cave (600 cocktails)", expanded=False):
+    with tab2:
+        st.caption("Recherche semantique dans 600 cocktails")
         search_query = st.text_input(
             "Rechercher...",
             placeholder="mojito, tropical, amer...",
@@ -612,53 +611,37 @@ def render_search_panel():
         )
 
         if search_query:
-            with st.spinner("Recherche semantique..."):
+            with st.spinner("Recherche..."):
                 results = search_cocktails_sbert(search_query, top_k=5)
 
             if results:
                 for r in results:
-                    st.markdown(f"**{r['name']}** - {r['similarity']}% de similarite")
-                    st.caption(r["description"][:150] + "...")
-                    st.divider()
+                    st.markdown(f"**{r['name']}** ({r['similarity']}%)")
+                    st.caption(r["description"][:100] + "...")
             else:
-                st.caption("Aucun resultat trouve")
+                st.caption("Aucun resultat")
 
+    with tab3:
+        col1, col2 = st.columns(2)
 
-def render_history_metrics_panel():
-    """Render history and metrics section on main page."""
-    col1, col2 = st.columns(2)
-
-    with col1:
-        with st.expander("Historique", expanded=False):
+        with col1:
+            st.markdown("**Historique**")
             if st.session_state.history:
-                for i, item in enumerate(st.session_state.history[:5]):
-                    if st.button(
-                        f"🍸 {item['name'][:25]}... ({item['timestamp']})",
-                        key=f"history_{i}",
-                        use_container_width=True
-                    ):
+                for i, item in enumerate(st.session_state.history[:3]):
+                    if st.button(f"{item['name'][:20]}...", key=f"history_{i}", use_container_width=True):
                         st.session_state.selected_history = item
                         st.rerun()
             else:
-                st.caption("*Aucune creation encore...*")
+                st.caption("Aucune creation")
 
-    with col2:
-        with st.expander("Metriques", expanded=False):
+        with col2:
+            st.markdown("**Metriques**")
             metrics = st.session_state.metrics
-
-            m1, m2, m3 = st.columns(3)
-            with m1:
-                st.metric("Requetes", metrics["total_requests"])
-            with m2:
-                cache_rate = 0
-                if metrics["total_requests"] > 0:
-                    cache_rate = round(metrics["cache_hits"] / metrics["total_requests"] * 100)
-                st.metric("Cache", f"{cache_rate}%")
-            with m3:
-                avg_time = 0
-                if metrics["total_requests"] > 0:
-                    avg_time = round(metrics["total_time"] / metrics["total_requests"] * 1000)
-                st.metric("Temps", f"{avg_time}ms")
+            st.metric("Requetes", metrics["total_requests"])
+            cache_rate = 0
+            if metrics["total_requests"] > 0:
+                cache_rate = round(metrics["cache_hits"] / metrics["total_requests"] * 100)
+            st.metric("Cache Hit", f"{cache_rate}%")
 
 
 # =============================================================================
@@ -830,10 +813,8 @@ def main():
     # Render header
     render_header()
 
-    # Control panels (filters, search, history, metrics)
-    render_filters_panel()
-    render_search_panel()
-    render_history_metrics_panel()
+    # Control tabs (filters, search, stats)
+    render_control_tabs()
 
     st.markdown('<div class="art-deco-divider">&#9670;</div>', unsafe_allow_html=True)
 
