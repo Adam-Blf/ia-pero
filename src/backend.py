@@ -132,7 +132,17 @@ def _call_gemini_api(query: str) -> dict | None:
         import google.generativeai as genai
 
         genai.configure(api_key=GOOGLE_API_KEY)
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        # Try multiple models in order of preference
+        model_names = ["gemini-1.5-flash-latest", "gemini-1.5-pro-latest", "gemini-pro"]
+        model = None
+        for model_name in model_names:
+            try:
+                model = genai.GenerativeModel(model_name)
+                break
+            except Exception:
+                continue
+        if model is None:
+            model = genai.GenerativeModel("gemini-pro")
 
         prompt = SPEAKEASY_PROMPT.format(query=query)
         response = model.generate_content(prompt)
