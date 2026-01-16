@@ -324,6 +324,8 @@ def generate_cocktail_characteristics(recipe_name: str) -> dict:
         "Amertume": round(random.uniform(1.5, 5), 1),
         "Force": round(random.uniform(1.5, 5), 1),
         "Fraicheur": round(random.uniform(1.5, 5), 1),
+        "Prix": round(random.uniform(1.5, 5), 1),
+        "Qualite": round(random.uniform(1.5, 5), 1),
     }
 
 
@@ -531,8 +533,11 @@ def main():
             recipe = result["recipe"]
             cached = result.get("cached", False)
 
-            # Generate characteristics for radar
-            characteristics = generate_cocktail_characteristics(recipe["name"])
+            # Use taste_profile from Gemini if available, otherwise generate fallback
+            if "taste_profile" in recipe and recipe["taste_profile"]:
+                characteristics = recipe["taste_profile"]
+            else:
+                characteristics = generate_cocktail_characteristics(recipe["name"])
 
             # Render cocktail card with radar
             render_cocktail_card(recipe, characteristics, cached)

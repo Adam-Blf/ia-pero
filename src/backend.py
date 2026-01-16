@@ -104,10 +104,12 @@ Structure exacte requise:
   "name": "Nom creatif et evocateur du cocktail",
   "ingredients": ["60ml Spiritueux principal", "30ml Mixer ou jus", "15ml Liqueur ou sirop", "Garniture"],
   "instructions": "1. Etape detaillee... 2. Etape detaillee... 3. Servir avec elegance.",
-  "taste_profile": {{"Douceur": 3.5, "Acidite": 2.5, "Amertume": 2.0, "Force": 4.0, "Fraicheur": 3.0}}
+  "taste_profile": {{"Douceur": 3.5, "Acidite": 2.5, "Amertume": 2.0, "Force": 4.0, "Fraicheur": 3.0, "Prix": 3.0, "Qualite": 4.0}}
 }}
 
 Les valeurs de taste_profile doivent etre entre 1.5 et 5.0.
+- Prix: 1.5 = tres abordable, 5.0 = ingredients de luxe
+- Qualite: 1.5 = cocktail simple, 5.0 = creation d'exception
 Sois creatif avec le nom, inspire-toi de l'epoque des annees folles."""
 
 
@@ -201,7 +203,7 @@ def _call_gemini_api(query: str) -> dict | None:
             return None
 
         # Ensure taste_profile has all required dimensions
-        taste_required = ["Douceur", "Acidite", "Amertume", "Force", "Fraicheur"]
+        taste_required = ["Douceur", "Acidite", "Amertume", "Force", "Fraicheur", "Prix", "Qualite"]
         taste_profile = recipe_data.get("taste_profile", {})
         for dim in taste_required:
             if dim not in taste_profile:
@@ -240,19 +242,19 @@ def _generate_fallback_recipe(query: str) -> dict:
     # Detect flavor preferences
     if any(w in query_lower for w in ["frais", "fresh", "rafraichissant", "ete"]):
         base_spirit = "Vodka"
-        profile = {"Douceur": 3.0, "Acidite": 3.5, "Amertume": 1.5, "Force": 3.0, "Fraicheur": 4.5}
+        profile = {"Douceur": 3.0, "Acidite": 3.5, "Amertume": 1.5, "Force": 3.0, "Fraicheur": 4.5, "Prix": 2.5, "Qualite": 3.5}
     elif any(w in query_lower for w in ["fort", "strong", "whisky", "bourbon"]):
         base_spirit = "Whisky Bourbon"
-        profile = {"Douceur": 2.5, "Acidite": 2.0, "Amertume": 3.0, "Force": 4.5, "Fraicheur": 2.0}
+        profile = {"Douceur": 2.5, "Acidite": 2.0, "Amertume": 3.0, "Force": 4.5, "Fraicheur": 2.0, "Prix": 4.0, "Qualite": 4.5}
     elif any(w in query_lower for w in ["tropical", "exotique", "fruit"]):
         base_spirit = "Rhum blanc"
-        profile = {"Douceur": 4.0, "Acidite": 2.5, "Amertume": 1.5, "Force": 3.0, "Fraicheur": 4.0}
+        profile = {"Douceur": 4.0, "Acidite": 2.5, "Amertume": 1.5, "Force": 3.0, "Fraicheur": 4.0, "Prix": 3.0, "Qualite": 3.5}
     elif any(w in query_lower for w in ["amer", "bitter", "negroni"]):
         base_spirit = "Gin"
-        profile = {"Douceur": 2.0, "Acidite": 2.0, "Amertume": 4.5, "Force": 4.0, "Fraicheur": 2.5}
+        profile = {"Douceur": 2.0, "Acidite": 2.0, "Amertume": 4.5, "Force": 4.0, "Fraicheur": 2.5, "Prix": 3.5, "Qualite": 4.0}
     else:
         base_spirit = "Gin"
-        profile = {"Douceur": 3.0, "Acidite": 3.0, "Amertume": 2.5, "Force": 3.5, "Fraicheur": 3.5}
+        profile = {"Douceur": 3.0, "Acidite": 3.0, "Amertume": 2.5, "Force": 3.5, "Fraicheur": 3.5, "Prix": 3.0, "Qualite": 3.5}
 
     return {
         "name": f"Le Secret du Speakeasy",
