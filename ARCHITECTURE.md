@@ -15,6 +15,14 @@ ia-pero/
 │   ├── cocktails.csv   # Base de 600 cocktails
 │   ├── recipe_cache.json # Cache des recettes (auto-genere)
 │   └── analytics.json  # Logs des requetes (auto-genere)
+├── assets/
+│   ├── logo.svg         # Logo Art Deco (verre cocktail dore)
+│   ├── cocktail-icon.svg # Icone cocktail simple
+│   ├── filter-icon.svg   # Icone filtre
+│   ├── search-icon.svg   # Icone recherche
+│   ├── stats-icon.svg    # Icone statistiques
+│   ├── surprise-icon.svg # Icone surprise (etoile)
+│   └── download-icon.svg # Icone telecharger
 └── tests/
     └── test_guardrail.py # Tests E2E Playwright
 ```
@@ -36,9 +44,10 @@ ia-pero/
 | 383-438 | **Recherche SBERT** | Recherche semantique dans les 600 cocktails |
 | 443-484 | **Export PDF** | Generation du fichier texte telechargeable |
 | 498-541 | **Radar Chart** | Graphique Plotly profil gustatif |
-| 560-661 | **Control Panels** | Filtres, recherche SBERT, historique, metriques |
-| 667-765 | **UI Components** | Header, input hybride, cards, empty state |
-| 822-940 | **Main App** | Point d'entree, orchestration de l'UI |
+| 560-645 | **Control Tabs** | Onglets: Filtres, Recherche SBERT, Stats |
+| 650-681 | **Header avec Logo** | Logo Art Deco SVG integre + titre |
+| 684-800 | **UI Components** | Input hybride, cards, empty state |
+| 805-930 | **Main App** | Point d'entree, orchestration de l'UI |
 
 ### Ou Trouver...
 
@@ -46,11 +55,13 @@ ia-pero/
 |----------------|---------|----------|
 | **Theme CSS Speakeasy** | app.py | `SPEAKEASY_CSS` |
 | **Couleurs Or/Noir** | app.py | Commentaire palette dans CSS |
-| **Filtres (Alcool/Difficulte/Temps)** | app.py | `render_filters_panel()` |
-| **Recherche SBERT** | app.py | `render_search_panel()` |
-| **Historique des recettes** | app.py | `render_history_metrics_panel()` |
-| **Metriques de session** | app.py | `render_history_metrics_panel()` |
-| **Musique jazz** | app.py | `render_filters_panel()` |
+| **Logo Art Deco** | app.py | `render_header()` (SVG inline) |
+| **Onglets (Filtres/Recherche/Stats)** | app.py | `render_control_tabs()` |
+| **Filtres (Alcool/Difficulte/Temps)** | app.py | `render_control_tabs()` tab1 |
+| **Recherche SBERT** | app.py | `render_control_tabs()` tab2 |
+| **Historique des recettes** | app.py | `render_control_tabs()` tab3 |
+| **Metriques de session** | app.py | `render_control_tabs()` tab3 |
+| **Musique jazz** | app.py | `render_control_tabs()` tab1 |
 | **Champ texte envie** | app.py | `render_cocktail_input()` |
 | **Dropdown Budget** | app.py | `render_cocktail_input()` |
 | **Bouton Surprise** | app.py | `render_cocktail_input()` |

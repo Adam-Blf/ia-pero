@@ -648,11 +648,34 @@ def render_control_tabs():
 # UI COMPONENTS
 # =============================================================================
 def render_header():
-    """Render Speakeasy header with logo and title."""
-    st.markdown("""
-        <div class="speakeasy-header">
-            <h1>L'IA Pero</h1>
-            <p class="speakeasy-subtitle">~ Le Bar Secret ~</p>
+    """Render Speakeasy header with Art Deco logo and title."""
+    # Inline SVG logo for Art Deco cocktail glass
+    logo_svg = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="80" height="80" style="margin-right: 1.5rem;">
+      <defs><linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#FFD700"/><stop offset="50%" style="stop-color:#D4AF37"/>
+        <stop offset="100%" style="stop-color:#B8860B"/></linearGradient></defs>
+      <circle cx="100" cy="100" r="95" fill="#0D0D0D" stroke="url(#gold)" stroke-width="3"/>
+      <path d="M100 20 L100 40" stroke="url(#gold)" stroke-width="2"/>
+      <path d="M100 160 L100 180" stroke="url(#gold)" stroke-width="2"/>
+      <path d="M20 100 L40 100" stroke="url(#gold)" stroke-width="2"/>
+      <path d="M160 100 L180 100" stroke="url(#gold)" stroke-width="2"/>
+      <path d="M70 60 L130 60 L105 120 L105 150 L120 150 L120 160 L80 160 L80 150 L95 150 L95 120 Z"
+            fill="none" stroke="url(#gold)" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M78 75 L122 75 L107 115 L93 115 Z" fill="url(#gold)" opacity="0.6"/>
+      <circle cx="100" cy="85" r="8" fill="#D4AF37"/>
+      <path d="M30 30 L50 30 L50 35 L35 35 L35 50 L30 50 Z" fill="url(#gold)"/>
+      <path d="M170 30 L150 30 L150 35 L165 35 L165 50 L170 50 Z" fill="url(#gold)"/>
+      <path d="M30 170 L50 170 L50 165 L35 165 L35 150 L30 150 Z" fill="url(#gold)"/>
+      <path d="M170 170 L150 170 L150 165 L165 165 L165 150 L170 150 Z" fill="url(#gold)"/>
+    </svg>'''
+
+    st.markdown(f"""
+        <div class="speakeasy-header" style="display: flex; align-items: center; justify-content: center; gap: 0;">
+            {logo_svg}
+            <div style="text-align: left;">
+                <h1 style="margin: 0;">L'IA Pero</h1>
+                <p class="speakeasy-subtitle" style="margin: 0;">~ Le Bar Secret ~</p>
+            </div>
         </div>
         <div class="art-deco-divider">&#9670; &#9670; &#9670;</div>
     """, unsafe_allow_html=True)
