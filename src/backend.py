@@ -115,14 +115,14 @@ def _call_gemini_api(query: str) -> dict | None:
     """
     Call Google Gemini API to generate a cocktail recipe.
 
-    Uses gemini-1.5-flash model with Speakeasy persona prompt.
-    Validates and parses the JSON response.
+    Automatically switches between models if rate limit (429) is reached.
+    Models are tried in order of preference with automatic failover.
 
     Args:
         query: User's cocktail request
 
     Returns:
-        dict with recipe data or None if API call fails
+        dict with recipe data or None if all models fail
     """
     if not GOOGLE_API_KEY:
         logger.warning("GOOGLE_API_KEY not configured - using fallback mode")
@@ -132,23 +132,57 @@ def _call_gemini_api(query: str) -> dict | None:
         import google.generativeai as genai
 
         genai.configure(api_key=GOOGLE_API_KEY)
-        # Try multiple models in order of preference
-        model_names = ["gemini-1.5-flash-latest", "gemini-1.5-pro-latest", "gemini-pro"]
-        model = None
-        for model_name in model_names:
-            try:
-                model = genai.GenerativeModel(model_name)
-                break
-            except Exception:
-                continue
-        if model is None:
-            model = genai.GenerativeModel("gemini-pro")
+
+        # Models ordered by preference (fastest/cheapest first)
+        # Based on Google AI Studio free tier limits
+        model_names = [
+            "gemini-2.5-flash-lite",  # 10 RPM, 20 RPD
+            "gemini-2.5-flash",        # 5 RPM, 20 RPD
+            "gemini-3-flash",          # 5 RPM, 20 RPD
+            "gemini-1.5-flash-latest", # Fallback
+            "gemini-pro",              # Legacy fallback
+        ]
 
         prompt = SPEAKEASY_PROMPT.format(query=query)
-        response = model.generate_content(prompt)
+        response = None
+        last_error = None
+
+        # Try each model until one succeeds
+        for model_name in model_names:
+            try:
+                logger.info(f"Trying model: {model_name}")
+                model = genai.GenerativeModel(model_name)
+                response = model.generate_content(prompt)
+
+                if response and response.text:
+                    logger.info(f"Success with model: {model_name}")
+                    break
+                else:
+                    logger.warning(f"Empty response from {model_name}, trying next...")
+                    response = None
+
+            except Exception as e:
+                error_str = str(e)
+                last_error = e
+
+                # Check for rate limit (429) or quota exceeded
+                if "429" in error_str or "quota" in error_str.lower() or "rate" in error_str.lower():
+                    logger.warning(f"Rate limit on {model_name}, switching to next model...")
+                    continue
+                # Check for model not found (404)
+                elif "404" in error_str or "not found" in error_str.lower():
+                    logger.warning(f"Model {model_name} not available, trying next...")
+                    continue
+                else:
+                    # Other error, still try next model
+                    logger.warning(f"Error with {model_name}: {e}, trying next...")
+                    continue
 
         if not response or not response.text:
-            logger.error("Empty response from Gemini API")
+            if last_error:
+                logger.error(f"All models failed. Last error: {last_error}")
+            else:
+                logger.error("All models returned empty responses")
             return None
 
         # Extract JSON from response (handle markdown code blocks)
