@@ -11,6 +11,8 @@ Application de recommandation de cocktails utilisant NLP semantique (SBERT) et g
 
 ## Features
 
+### Core
+
 - [x] Interface Streamlit moderne
 - [x] Support de plusieurs modeles SBERT
 - [x] Matrice de similarite interactive
@@ -22,6 +24,17 @@ Application de recommandation de cocktails utilisant NLP semantique (SBERT) et g
 - [x] **Generation GenAI** (Google Gemini)
 - [x] **Cache JSON** (optimisation des couts API)
 - [x] **600 cocktails** dans la base de donnees
+
+### Nouveautes v2.0
+
+- [x] **Historique des recettes** - Derniers 5 cocktails crees dans la sidebar
+- [x] **Filtres avances** - Type (Alcool/Sans alcool/Tous), Difficulte, Temps de preparation
+- [x] **Recherche SBERT** - Rechercher dans les 600 cocktails de la base CSV
+- [x] **Metriques de performance** - Temps de reponse, taux de cache hit, requetes totales
+- [x] **Analytics** - Logging JSON des requetes pour analyse
+- [x] **Export recette** - Telecharger la recette en format texte
+- [x] **Bouton Surprise** - "Surprends-moi!" genere un cocktail aleatoire
+- [x] **Son ambient** - Musique jazz optionnelle (annees 1920)
 
 ## Justification des Choix Techniques (RNCP Bloc 2)
 
@@ -258,7 +271,8 @@ ia-pero/
 ├── data/
 │   ├── .gitkeep
 │   ├── cocktails.csv        # Base de 600 cocktails
-│   └── recipe_cache.json    # Recipe cache (auto-generated)
+│   ├── recipe_cache.json    # Recipe cache (auto-generated)
+│   └── analytics.json       # Analytics log (auto-generated)
 ├── tests/
 │   └── test_guardrail.py    # Tests E2E Playwright
 └── .streamlit/
@@ -266,6 +280,19 @@ ia-pero/
 ```
 
 ## Changelog
+
+### 2026-01-16 (v2.0 - Features Avancees)
+
+- **Sidebar Complete** :
+  - Historique des 5 derniers cocktails crees (session state)
+  - Filtres avances : Type (Alcool/Sans alcool), Difficulte (1-5), Temps de preparation
+  - Recherche SBERT dans les 600 cocktails de la base CSV
+  - Metriques de performance en temps reel
+  - Bouton son ambient (jazz annees 1920)
+- **Analytics** : Logging JSON des requetes (timestamp, query, budget, cached, temps)
+- **Export** : Telecharger la recette en format texte stylise
+- **UX** : Bouton "Surprends-moi!" pour generation aleatoire
+- **Performance** : Affichage temps de reponse et taux de cache hit
 
 ### 2026-01-16 (Integration GenAI)
 
