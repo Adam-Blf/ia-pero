@@ -800,11 +800,17 @@ def generate_cocktail_characteristics(recipe_name: str) -> dict:
 # CONTROL PANEL (Main page with tabs)
 # =============================================================================
 def render_control_tabs():
-    """Render control tabs with filters, search, history, metrics."""
+    """
+    Affiche les onglets de contrôle (filtres, recherche, stats).
+
+    Les filtres permettent à l'utilisateur de raffiner sa recherche de cocktails.
+    L'interface est centrée pour une meilleure expérience visuelle.
+    """
     tab1, tab2, tab3 = st.tabs(["Filtres", "Recherche", "Stats"])
 
     with tab1:
-        col1, col2, col3, col4 = st.columns(4)
+        # Centrer les colonnes en utilisant des espacements
+        _, col1, col2, col3, col4, _ = st.columns([0.5, 1, 1, 1, 1, 0.5])
 
         with col1:
             alcohol = st.selectbox(
