@@ -5,9 +5,20 @@
 ![Streamlit](https://img.shields.io/badge/streamlit-1.35+-red)
 ![RNCP](https://img.shields.io/badge/RNCP-Bloc%202%20Valid%C3%A9-gold)
 
-Application de recommandation de cocktails utilisant NLP semantique (SBERT) et generation GenAI (Google Gemini).
+Application de recommandation de cocktails utilisant **NLP semantique (SBERT)** et **generation GenAI (Google Gemini)**.
 
 **Auteurs** : Adam Beloucif & Amina Medjdoub
+**Tutrice** : MALAEB Sarah
+**Formation** : EFREI Paris - Mastere Data Engineering et IA
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [RAPPORT_FINAL.md](RAPPORT_FINAL.md) | Rapport RNCP Bloc 2 complet (27 pages) |
+| [SOUTENANCE_SLIDES.md](SOUTENANCE_SLIDES.md) | Slides de presentation (12 slides) |
+| [QUICK_START.md](QUICK_START.md) | Guide de demarrage rapide |
+| [KAGGLE_INTEGRATION.md](KAGGLE_INTEGRATION.md) | Documentation integration Kaggle |
 
 ## Features
 
@@ -23,7 +34,20 @@ Application de recommandation de cocktails utilisant NLP semantique (SBERT) et g
 - [x] **Graphique Radar Plotly** (profil gustatif 7 dimensions)
 - [x] **Generation GenAI** (Google Gemini)
 - [x] **Cache JSON** (optimisation des couts API)
-- [x] **600 cocktails** dans la base de donnees
+- [x] **600+ cocktails** dans la base de donnees (extensible a 1600 via Kaggle)
+
+### Nouveautes v2.2
+
+- [x] **Integration Kaggle** - 1600+ cocktails supplementaires disponibles
+- [x] **Profilage ingredients** - 61 ingredients avec profils gustatifs 7D
+- [x] **Analyse semantique detaillee** - Pipeline SBERT complet documente
+- [x] **Rapport RNCP** - Documentation complete 27 pages avec analyse semantique
+- [x] **Scripts enrichissement** - Outils d'import et transformation des donnees
+
+### Nouveautes v2.1
+
+- [x] **Performance 40-60x** - Cache embeddings precomputes
+- [x] **Fallback multi-modeles** - 5 modeles Gemini en cascade
 
 ### Nouveautes v2.0
 
@@ -263,23 +287,38 @@ ia-pero/
 ├── .env.example              # Template configuration API
 ├── .gitignore
 ├── README.md
+├── RAPPORT_FINAL.md          # Rapport RNCP Bloc 2 (27 pages)
+├── SOUTENANCE_SLIDES.md      # Slides presentation (12 slides)
+├── pdf-compact.json          # Configuration generation PDF
 ├── src/
 │   ├── __init__.py
-│   ├── app.py               # Streamlit app (Speakeasy Cocktails)
-│   ├── embeddings.py        # SBERT logic
-│   ├── backend.py           # RAG engine, guardrail & Gemini
-│   ├── generate_data.py     # Generateur de 600 cocktails
+│   ├── app.py               # Streamlit app (Speakeasy Cocktails) - 1,243 lignes
+│   ├── embeddings.py        # SBERT logic (78 lignes)
+│   ├── backend.py           # RAG engine, guardrail & Gemini (436 lignes)
+│   ├── generate_data.py     # Generateur de 600 cocktails (645 lignes)
+│   ├── ingredient_profiler.py   # Profilage ingredients 4 niveaux (441 lignes)
+│   ├── kaggle_integration.py    # Parser Kaggle 1600+ cocktails (390 lignes)
 │   └── utils.py             # Utility functions
 ├── data/
-│   ├── .gitkeep
 │   ├── cocktails.csv        # Base de 600 cocktails
+│   ├── known_ingredients.json   # 61 ingredients profiles
 │   ├── recipe_cache.json    # Recipe cache (auto-generated)
 │   └── analytics.json       # Analytics log (auto-generated)
+├── scripts/
+│   ├── download_kaggle.py   # Telechargement dataset Kaggle
+│   ├── enrich_kaggle.py     # Enrichissement donnees
+│   ├── export_known_ingredients.py  # Export ingredients
+│   └── test_integration.py  # Tests integration
 ├── tests/
 │   └── test_guardrail.py    # Tests E2E Playwright
+├── assets/
+│   ├── logo.svg             # Logo Art Deco
+│   └── logo-efrei.png       # Logo EFREI
 └── .streamlit/
     └── config.toml          # Theme configuration
 ```
+
+**Total : ~3,279 lignes de code Python**
 
 ## 🚀 Optimisations de Performance (Dernière mise à jour)
 
@@ -370,6 +409,23 @@ L'onglet **Stats** affiche:
 - Historique des 10 dernières créations
 
 ## Changelog
+
+### 2026-02-02 (v2.2 - Rapport RNCP & Integration Kaggle)
+
+- **Rapport RNCP Bloc 2** : Documentation complete 27 pages
+  - Analyse semantique detaillee avec exemples concrets
+  - Pipeline SBERT documente (embeddings 384D, similarite cosinus)
+  - Comparaison recherche mot-cle vs semantique
+  - Visualisation espace vectoriel (clusters t-SNE)
+- **Integration Kaggle** : 1600+ cocktails supplementaires
+  - Parser automatique du dataset Kaggle
+  - Enrichissement avec profils gustatifs
+  - Scripts de transformation et export
+- **Profilage ingredients** : 61 ingredients avec profils 7D
+  - 4 niveaux de profilage (connu, categorie, IA, defaut)
+  - Profils gustatifs (Douceur, Acidite, Amertume, Force, Fraicheur, Prix, Qualite)
+- **Documentation** : QUICK_START, KAGGLE_INTEGRATION, SOUTENANCE_SLIDES
+- **Assets** : Logo EFREI pour rapport officiel
 
 ### 2026-02-02 (v2.1 - Optimisations Performance)
 
