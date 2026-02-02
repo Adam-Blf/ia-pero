@@ -181,3 +181,31 @@ scratch/
 
 # Claude Code
 .claude/
+
+# =============================================================================
+# NODE.JS (md-to-pdf)
+# =============================================================================
+node_modules/
+package.json
+package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =============================================================================
+# GENERATED REPORTS (PDF)
+# =============================================================================
+*.pdf
+!assets/*.pdf
+
+# Old/intermediate report versions
+RAPPORT_30_PAGES.md
+RAPPORT_FINAL_30P.md
+RAPPORT_IA_PERO.md
+ANNEXES_TECHNIQUES.md
+
+# =============================================================================
+# DATA FILES (Large/Generated)
+# =============================================================================
+data/kaggle_raw.csv
+data/kaggle_cocktails_enriched.csv

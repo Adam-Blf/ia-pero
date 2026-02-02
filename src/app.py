@@ -361,6 +361,7 @@ def init_session_state():
     # Initialize filter defaults (show all options)
     if "filters" not in st.session_state:
         st.session_state.filters = {
+            "source": "Tous",       # No source filter
             "alcohol": "Tous",      # No alcohol filter
             "difficulty": "Tous",   # No difficulty filter
             "prep_time": "Tous",    # No time filter
@@ -508,22 +509,43 @@ def add_to_history(recipe: dict, query: str):
 @st.cache_data
 def load_cocktails_csv():
     """
-    Load cocktails database from CSV file.
+    Load and merge cocktails databases from CSV files.
 
     This function is cached by Streamlit to avoid repeated disk I/O.
-    The CSV contains 600 cocktails with semantic descriptions for search.
+    Merges two datasets:
+    - 600 generated cocktails (data/cocktails.csv)
+    - Kaggle enriched cocktails (data/kaggle_cocktails_enriched.csv)
 
     Returns:
-        pandas.DataFrame: Cocktails data with columns:
+        pandas.DataFrame: Combined cocktails data with columns:
             - name: Cocktail name
             - description_semantique: Rich semantic description for SBERT matching
             - ingredients: Comma-separated ingredients list
+            - source: 'generated' or 'kaggle'
             - (other metadata fields...)
 
     Performance: ~50ms first load, <1ms cached
     """
+    datasets = []
+
+    # Load generated cocktails (600)
     if COCKTAILS_CSV.exists():
-        return pd.read_csv(COCKTAILS_CSV)
+        generated_df = pd.read_csv(COCKTAILS_CSV)
+        generated_df['source'] = 'generated'
+        datasets.append(generated_df)
+
+    # Load Kaggle enriched cocktails
+    kaggle_path = Path(__file__).parent.parent / "data" / "kaggle_cocktails_enriched.csv"
+    if kaggle_path.exists():
+        kaggle_df = pd.read_csv(kaggle_path)
+        kaggle_df['source'] = 'kaggle'
+        datasets.append(kaggle_df)
+
+    # Merge datasets
+    if datasets:
+        combined_df = pd.concat(datasets, ignore_index=True)
+        return combined_df
+
     return pd.DataFrame()
 
 
@@ -578,7 +600,7 @@ def _precompute_cocktail_embeddings():
         return [], np.array([])
 
 
-def search_cocktails_sbert(query: str, top_k: int = 5) -> list:
+def search_cocktails_sbert(query: str, top_k: int = 5, source_filter: str = "Tous") -> list:
     """
     Search cocktails using SBERT semantic similarity (OPTIMIZED VERSION).
 
@@ -662,11 +684,20 @@ def search_cocktails_sbert(query: str, top_k: int = 5) -> list:
 
             # Filter out weak matches (< 20% similarity)
             if similarity_score > 0.2:
+                # Apply source filter if specified
+                cocktail_source = df.iloc[idx].get("source", "generated")
+                if source_filter != "Tous":
+                    if source_filter == "Generes par IA" and cocktail_source != "generated":
+                        continue
+                    elif source_filter == "Base Kaggle" and cocktail_source != "kaggle":
+                        continue
+
                 results.append({
                     "name": df.iloc[idx]["name"],
                     "description": df.iloc[idx]["description_semantique"],
                     "ingredients": df.iloc[idx].get("ingredients", ""),
                     "similarity": round(similarity_score * 100, 1),  # Convert to percentage
+                    "source": cocktail_source,
                 })
 
         logger.info(f"SBERT search returned {len(results)} results for query: {query[:50]}")
@@ -809,6 +840,14 @@ def render_control_tabs():
     tab1, tab2, tab3 = st.tabs(["Filtres", "Recherche", "Stats"])
 
     with tab1:
+        # Filtre de source (full-width)
+        source_filter = st.selectbox(
+            "Source des cocktails",
+            ["Tous", "Generes par IA", "Base Kaggle"],
+            key="filter_source",
+            help="Filtrez par source: cocktails generes par L'IA Pero ou provenant de la base Kaggle"
+        )
+
         # Centrer les colonnes en utilisant des espacements
         _, col1, col2, col3, col4, _ = st.columns([0.5, 1, 1, 1, 1, 0.5])
 
@@ -834,6 +873,7 @@ def render_control_tabs():
             jazz_enabled = st.checkbox("Jazz", value=False, key="jazz_toggle")
 
         st.session_state.filters = {
+            "source": source_filter,
             "alcohol": alcohol,
             "difficulty": difficulty,
             "prep_time": prep_time,
@@ -857,7 +897,9 @@ def render_control_tabs():
 
         if search_query:
             with st.spinner("Recherche..."):
-                results = search_cocktails_sbert(search_query, top_k=5)
+                # Apply source filter from filters state
+                current_source_filter = st.session_state.filters.get("source", "Tous")
+                results = search_cocktails_sbert(search_query, top_k=5, source_filter=current_source_filter)
 
             if results:
                 for r in results:
@@ -998,15 +1040,19 @@ def render_cocktail_card(recipe: dict, characteristics: dict, cached: bool = Fal
     name = recipe.get("name", "Cocktail Mystere")
     instructions = recipe.get("instructions", "Melanger avec elegance...")
     ingredients = recipe.get("ingredients", [])
+    source = recipe.get("source", "generated")
 
     with st.container():
-        # Header with cache badge and duration
+        # Header with cache badge, source badge, and duration
         col1, col2 = st.columns([3, 1])
         with col1:
+            title = f"## 🥃 {name}"
             if cached:
-                st.markdown(f"## 🥃 {name} <small style='color: #D4AF37; font-size: 0.5em;'>Du Cellier</small>", unsafe_allow_html=True)
-            else:
-                st.markdown(f"## 🥃 {name}")
+                title += " <small style='color: #D4AF37; font-size: 0.5em;'>Du Cellier</small>"
+            # Add source badge
+            if source == "kaggle":
+                title += " <small style='color: #87CEEB; font-size: 0.4em; background: rgba(135, 206, 235, 0.1); padding: 2px 6px; border-radius: 3px;'>Kaggle</small>"
+            st.markdown(title, unsafe_allow_html=True)
         with col2:
             if duration > 0:
                 st.caption(f"⏱️ {round(duration * 1000)}ms")
@@ -1105,6 +1151,10 @@ def main():
     # Apply filters to query
     filters = st.session_state.filters
     filter_context = []
+
+    # Note: Source filter is applied to search results, not to generation
+    # Generation creates new cocktails, so source filter doesn't apply here
+
     if filters["alcohol"] == "Sans Alcool":
         filter_context.append("sans alcool, mocktail")
     if filters["difficulty"] == "Facile":

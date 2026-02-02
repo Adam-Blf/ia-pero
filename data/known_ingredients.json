@@ -1,0 +1,905 @@
+{
+  "spirits": {
+    "vodka": {
+      "name_fr": "Vodka",
+      "name_en": [
+        "vodka"
+      ],
+      "strength": 4.5,
+      "sweetness": 1.5,
+      "acidity": 1.0,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "neutral",
+      "notes": [
+        "neutre",
+        "pur"
+      ],
+      "category": "spirit"
+    },
+    "gin": {
+      "name_fr": "Gin",
+      "name_en": [
+        "gin"
+      ],
+      "strength": 4.0,
+      "sweetness": 1.5,
+      "acidity": 1.0,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "botanical",
+      "notes": [
+        "genievre",
+        "herbes",
+        "agrumes"
+      ],
+      "category": "spirit"
+    },
+    "rhum blanc": {
+      "name_fr": "Rhum blanc",
+      "name_en": [
+        "white rum",
+        "light rum"
+      ],
+      "strength": 4.0,
+      "sweetness": 2.5,
+      "acidity": 1.0,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "sugar_cane",
+      "notes": [
+        "canne",
+        "leger",
+        "tropical"
+      ],
+      "category": "spirit"
+    },
+    "rhum ambre": {
+      "name_fr": "Rhum ambre",
+      "name_en": [
+        "amber rum",
+        "gold rum"
+      ],
+      "strength": 4.2,
+      "sweetness": 3.0,
+      "acidity": 1.0,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "sugar_cane",
+      "notes": [
+        "caramel",
+        "vanille",
+        "boise"
+      ],
+      "category": "spirit"
+    },
+    "rhum brun": {
+      "name_fr": "Rhum brun",
+      "name_en": [
+        "dark rum"
+      ],
+      "strength": 4.5,
+      "sweetness": 3.0,
+      "acidity": 1.0,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "sugar_cane",
+      "notes": [
+        "melasse",
+        "epice",
+        "profond"
+      ],
+      "category": "spirit"
+    },
+    "tequila blanco": {
+      "name_fr": "Tequila blanco",
+      "name_en": [
+        "tequila",
+        "silver tequila"
+      ],
+      "strength": 4.0,
+      "sweetness": 1.5,
+      "acidity": 1.0,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "agave",
+      "notes": [
+        "agave",
+        "poivre",
+        "citrus"
+      ],
+      "category": "spirit"
+    },
+    "tequila reposado": {
+      "name_fr": "Tequila reposado",
+      "name_en": [
+        "reposado tequila"
+      ],
+      "strength": 4.2,
+      "sweetness": 1.5,
+      "acidity": 1.0,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "agave",
+      "notes": [
+        "agave",
+        "vanille",
+        "boise"
+      ],
+      "category": "spirit"
+    },
+    "whisky bourbon": {
+      "name_fr": "Whisky bourbon",
+      "name_en": [
+        "bourbon",
+        "bourbon whiskey"
+      ],
+      "strength": 4.5,
+      "sweetness": 1.5,
+      "acidity": 1.0,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "grain",
+      "notes": [
+        "vanille",
+        "caramel",
+        "chene"
+      ],
+      "category": "spirit"
+    },
+    "whisky scotch": {
+      "name_fr": "Whisky scotch",
+      "name_en": [
+        "scotch",
+        "scotch whisky"
+      ],
+      "strength": 4.5,
+      "sweetness": 1.5,
+      "acidity": 1.0,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "grain",
+      "notes": [
+        "tourbe",
+        "fume",
+        "malt"
+      ],
+      "category": "spirit"
+    },
+    "whisky irlandais": {
+      "name_fr": "Whisky irlandais",
+      "name_en": [
+        "irish whiskey"
+      ],
+      "strength": 4.0,
+      "sweetness": 1.5,
+      "acidity": 1.0,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "grain",
+      "notes": [
+        "doux",
+        "miel",
+        "cereale"
+      ],
+      "category": "spirit"
+    },
+    "cognac": {
+      "name_fr": "Cognac",
+      "name_en": [
+        "cognac"
+      ],
+      "strength": 4.5,
+      "sweetness": 2.0,
+      "acidity": 1.0,
+      "bitterness": 1.5,
+      "freshness": 2.0,
+      "type": "grape",
+      "notes": [
+        "raisin",
+        "chene",
+        "fruit sec"
+      ],
+      "category": "spirit"
+    },
+    "brandy": {
+      "name_fr": "Brandy",
+      "name_en": [
+        "brandy"
+      ],
+      "strength": 4.0,
+      "sweetness": 2.0,
+      "acidity": 1.0,
+      "bitterness": 1.5,
+      "freshness": 2.0,
+      "type": "grape",
+      "notes": [
+        "fruit",
+        "chaleureux",
+        "rond"
+      ],
+      "category": "spirit"
+    },
+    "mezcal": {
+      "name_fr": "Mezcal",
+      "name_en": [
+        "mezcal"
+      ],
+      "strength": 4.5,
+      "sweetness": 1.5,
+      "acidity": 1.0,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "agave",
+      "notes": [
+        "fume",
+        "terreux",
+        "agave"
+      ],
+      "category": "spirit"
+    },
+    "pisco": {
+      "name_fr": "Pisco",
+      "name_en": [
+        "pisco"
+      ],
+      "strength": 4.0,
+      "sweetness": 2.0,
+      "acidity": 1.0,
+      "bitterness": 1.5,
+      "freshness": 2.0,
+      "type": "grape",
+      "notes": [
+        "floral",
+        "muscat",
+        "fruite"
+      ],
+      "category": "spirit"
+    },
+    "cachaca": {
+      "name_fr": "Cachaca",
+      "name_en": [
+        "cachaca"
+      ],
+      "strength": 4.0,
+      "sweetness": 2.5,
+      "acidity": 1.0,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "sugar_cane",
+      "notes": [
+        "herbe",
+        "vegetal",
+        "frais"
+      ],
+      "category": "spirit"
+    }
+  },
+  "mixers": {
+    "jus de citron vert": {
+      "name_fr": "Jus de citron vert",
+      "name_en": [
+        "lime juice"
+      ],
+      "strength": 1.5,
+      "sweetness": 1.5,
+      "acidity": 4.5,
+      "bitterness": 1.5,
+      "freshness": 4.0,
+      "type": "citrus",
+      "category": "mixer"
+    },
+    "jus de citron jaune": {
+      "name_fr": "Jus de citron jaune",
+      "name_en": [
+        "lemon juice"
+      ],
+      "strength": 1.5,
+      "sweetness": 1.5,
+      "acidity": 4.0,
+      "bitterness": 1.5,
+      "freshness": 4.0,
+      "type": "citrus",
+      "category": "mixer"
+    },
+    "jus d'orange": {
+      "name_fr": "Jus d'orange",
+      "name_en": [
+        "orange juice"
+      ],
+      "strength": 1.5,
+      "sweetness": 3.5,
+      "acidity": 2.5,
+      "bitterness": 1.5,
+      "freshness": 4.0,
+      "type": "citrus",
+      "category": "mixer"
+    },
+    "jus de pamplemousse": {
+      "name_fr": "Jus de pamplemousse",
+      "name_en": [
+        "grapefruit juice"
+      ],
+      "strength": 1.5,
+      "sweetness": 2.5,
+      "acidity": 3.5,
+      "bitterness": 1.5,
+      "freshness": 4.0,
+      "type": "citrus",
+      "category": "mixer"
+    },
+    "jus d'ananas": {
+      "name_fr": "Jus d'ananas",
+      "name_en": [
+        "pineapple juice"
+      ],
+      "strength": 1.5,
+      "sweetness": 4.5,
+      "acidity": 2.0,
+      "bitterness": 1.5,
+      "freshness": 3.5,
+      "type": "tropical",
+      "category": "mixer"
+    },
+    "jus de cranberry": {
+      "name_fr": "Jus de cranberry",
+      "name_en": [
+        "cranberry juice"
+      ],
+      "strength": 1.5,
+      "sweetness": 2.5,
+      "acidity": 3.5,
+      "bitterness": 1.8,
+      "freshness": 3.5,
+      "type": "berry",
+      "category": "mixer"
+    },
+    "jus de passion": {
+      "name_fr": "Jus de passion",
+      "name_en": [
+        "passion fruit juice"
+      ],
+      "strength": 1.5,
+      "sweetness": 4.0,
+      "acidity": 3.0,
+      "bitterness": 1.5,
+      "freshness": 3.5,
+      "type": "tropical",
+      "category": "mixer"
+    },
+    "jus de mangue": {
+      "name_fr": "Jus de mangue",
+      "name_en": [
+        "mango juice"
+      ],
+      "strength": 1.5,
+      "sweetness": 5.0,
+      "acidity": 1.5,
+      "bitterness": 1.5,
+      "freshness": 3.5,
+      "type": "tropical",
+      "category": "mixer"
+    },
+    "tonic water": {
+      "name_fr": "Tonic water",
+      "name_en": [
+        "tonic water"
+      ],
+      "strength": 1.5,
+      "sweetness": 2.0,
+      "acidity": 1.5,
+      "bitterness": 1.5,
+      "freshness": 4.0,
+      "type": "carbonated",
+      "category": "mixer"
+    },
+    "ginger beer": {
+      "name_fr": "Ginger beer",
+      "name_en": [
+        "ginger beer"
+      ],
+      "strength": 1.5,
+      "sweetness": 3.0,
+      "acidity": 2.0,
+      "bitterness": 1.5,
+      "freshness": 4.0,
+      "type": "carbonated",
+      "category": "mixer"
+    },
+    "ginger ale": {
+      "name_fr": "Ginger ale",
+      "name_en": [
+        "ginger ale"
+      ],
+      "strength": 1.5,
+      "sweetness": 3.5,
+      "acidity": 1.5,
+      "bitterness": 1.5,
+      "freshness": 4.0,
+      "type": "carbonated",
+      "category": "mixer"
+    },
+    "soda": {
+      "name_fr": "Soda",
+      "name_en": [
+        "soda water",
+        "club soda"
+      ],
+      "strength": 1.5,
+      "sweetness": 1.0,
+      "acidity": 1.0,
+      "bitterness": 1.5,
+      "freshness": 4.0,
+      "type": "carbonated",
+      "category": "mixer"
+    },
+    "eau gazeuse": {
+      "name_fr": "Eau gazeuse",
+      "name_en": [
+        "sparkling water"
+      ],
+      "strength": 1.5,
+      "sweetness": 1.0,
+      "acidity": 1.0,
+      "bitterness": 1.5,
+      "freshness": 4.0,
+      "type": "carbonated",
+      "category": "mixer"
+    },
+    "cola": {
+      "name_fr": "Cola",
+      "name_en": [
+        "cola"
+      ],
+      "strength": 1.5,
+      "sweetness": 4.5,
+      "acidity": 2.5,
+      "bitterness": 1.5,
+      "freshness": 4.0,
+      "type": "carbonated",
+      "category": "mixer"
+    },
+    "lait de coco": {
+      "name_fr": "Lait de coco",
+      "name_en": [
+        "coconut milk"
+      ],
+      "strength": 1.5,
+      "sweetness": 2.5,
+      "acidity": 1.0,
+      "bitterness": 1.5,
+      "freshness": 1.5,
+      "type": "creamy",
+      "category": "mixer"
+    },
+    "creme de coco": {
+      "name_fr": "Creme de coco",
+      "name_en": [
+        "cream of coconut"
+      ],
+      "strength": 1.5,
+      "sweetness": 4.0,
+      "acidity": 1.0,
+      "bitterness": 1.5,
+      "freshness": 1.5,
+      "type": "creamy",
+      "category": "mixer"
+    },
+    "jus de tomate": {
+      "name_fr": "Jus de tomate",
+      "name_en": [
+        "tomato juice"
+      ],
+      "strength": 1.5,
+      "sweetness": 2.0,
+      "acidity": 3.0,
+      "bitterness": 1.5,
+      "freshness": 2.5,
+      "type": "savory",
+      "category": "mixer"
+    },
+    "nectar de peche": {
+      "name_fr": "Nectar de peche",
+      "name_en": [
+        "peach nectar"
+      ],
+      "strength": 1.5,
+      "sweetness": 4.0,
+      "acidity": 1.5,
+      "bitterness": 1.5,
+      "freshness": 2.5,
+      "type": "fruit",
+      "category": "mixer"
+    },
+    "puree de framboise": {
+      "name_fr": "Puree de framboise",
+      "name_en": [
+        "raspberry puree"
+      ],
+      "strength": 1.5,
+      "sweetness": 3.5,
+      "acidity": 2.5,
+      "bitterness": 1.8,
+      "freshness": 3.5,
+      "type": "berry",
+      "category": "mixer"
+    },
+    "puree de fraise": {
+      "name_fr": "Puree de fraise",
+      "name_en": [
+        "strawberry puree"
+      ],
+      "strength": 1.5,
+      "sweetness": 4.0,
+      "acidity": 2.0,
+      "bitterness": 1.8,
+      "freshness": 3.5,
+      "type": "berry",
+      "category": "mixer"
+    },
+    "jus de pomme": {
+      "name_fr": "Jus de pomme",
+      "name_en": [
+        "apple juice"
+      ],
+      "strength": 1.5,
+      "sweetness": 3.5,
+      "acidity": 2.5,
+      "bitterness": 1.5,
+      "freshness": 2.5,
+      "type": "fruit",
+      "category": "mixer"
+    },
+    "jus de raisin": {
+      "name_fr": "Jus de raisin",
+      "name_en": [
+        "grape juice"
+      ],
+      "strength": 1.5,
+      "sweetness": 4.0,
+      "acidity": 2.0,
+      "bitterness": 1.5,
+      "freshness": 2.5,
+      "type": "fruit",
+      "category": "mixer"
+    },
+    "eau de rose": {
+      "name_fr": "Eau de rose",
+      "name_en": [
+        "rose water"
+      ],
+      "strength": 1.5,
+      "sweetness": 1.5,
+      "acidity": 1.0,
+      "bitterness": 1.5,
+      "freshness": 2.5,
+      "type": "floral",
+      "category": "mixer"
+    },
+    "jus de grenade": {
+      "name_fr": "Jus de grenade",
+      "name_en": [
+        "pomegranate juice"
+      ],
+      "strength": 1.5,
+      "sweetness": 3.5,
+      "acidity": 3.0,
+      "bitterness": 1.5,
+      "freshness": 2.5,
+      "type": "fruit",
+      "category": "mixer"
+    },
+    "nectar de litchi": {
+      "name_fr": "Nectar de litchi",
+      "name_en": [
+        "lychee nectar"
+      ],
+      "strength": 1.5,
+      "sweetness": 5.0,
+      "acidity": 1.5,
+      "bitterness": 1.5,
+      "freshness": 3.5,
+      "type": "tropical",
+      "category": "mixer"
+    }
+  },
+  "modifiers": {
+    "triple sec": {
+      "name_fr": "Triple Sec",
+      "name_en": [
+        "triple sec"
+      ],
+      "strength": 2.5,
+      "sweetness": 4.0,
+      "acidity": 2.5,
+      "bitterness": 2.0,
+      "freshness": 3.0,
+      "type": "liqueur",
+      "flavor": "orange",
+      "category": "modifier"
+    },
+    "cointreau": {
+      "name_fr": "Cointreau",
+      "name_en": [
+        "cointreau"
+      ],
+      "strength": 2.5,
+      "sweetness": 3.5,
+      "acidity": 2.5,
+      "bitterness": 2.0,
+      "freshness": 3.0,
+      "type": "liqueur",
+      "flavor": "orange noble",
+      "category": "modifier"
+    },
+    "grand marnier": {
+      "name_fr": "Grand Marnier",
+      "name_en": [
+        "grand marnier"
+      ],
+      "strength": 2.5,
+      "sweetness": 4.0,
+      "acidity": 2.5,
+      "bitterness": 2.0,
+      "freshness": 3.0,
+      "type": "liqueur",
+      "flavor": "orange cognac",
+      "category": "modifier"
+    },
+    "amaretto": {
+      "name_fr": "Amaretto",
+      "name_en": [
+        "amaretto"
+      ],
+      "strength": 2.5,
+      "sweetness": 4.5,
+      "acidity": 1.5,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "liqueur",
+      "flavor": "amande",
+      "category": "modifier"
+    },
+    "kahlua": {
+      "name_fr": "Kahlua",
+      "name_en": [
+        "kahlua",
+        "coffee liqueur"
+      ],
+      "strength": 2.5,
+      "sweetness": 4.5,
+      "acidity": 1.5,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "liqueur",
+      "flavor": "cafe",
+      "category": "modifier"
+    },
+    "baileys": {
+      "name_fr": "Baileys",
+      "name_en": [
+        "baileys",
+        "irish cream"
+      ],
+      "strength": 2.0,
+      "sweetness": 4.5,
+      "acidity": 1.5,
+      "bitterness": 2.0,
+      "freshness": 1.5,
+      "type": "cream",
+      "flavor": "creme cafe",
+      "category": "modifier"
+    },
+    "chambord": {
+      "name_fr": "Chambord",
+      "name_en": [
+        "chambord",
+        "raspberry liqueur"
+      ],
+      "strength": 2.5,
+      "sweetness": 4.0,
+      "acidity": 1.5,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "liqueur",
+      "flavor": "framboise",
+      "category": "modifier"
+    },
+    "creme de menthe": {
+      "name_fr": "Creme de menthe",
+      "name_en": [
+        "creme de menthe",
+        "peppermint liqueur"
+      ],
+      "strength": 2.5,
+      "sweetness": 4.0,
+      "acidity": 1.5,
+      "bitterness": 2.0,
+      "freshness": 4.5,
+      "type": "liqueur",
+      "flavor": "menthe",
+      "category": "modifier"
+    },
+    "blue curacao": {
+      "name_fr": "Blue Curacao",
+      "name_en": [
+        "blue curacao"
+      ],
+      "strength": 2.5,
+      "sweetness": 4.0,
+      "acidity": 2.5,
+      "bitterness": 2.0,
+      "freshness": 3.0,
+      "type": "liqueur",
+      "flavor": "orange bleue",
+      "category": "modifier"
+    },
+    "midori": {
+      "name_fr": "Midori",
+      "name_en": [
+        "midori",
+        "melon liqueur"
+      ],
+      "strength": 2.5,
+      "sweetness": 4.5,
+      "acidity": 1.5,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "liqueur",
+      "flavor": "melon",
+      "category": "modifier"
+    },
+    "malibu": {
+      "name_fr": "Malibu",
+      "name_en": [
+        "malibu",
+        "coconut rum"
+      ],
+      "strength": 2.5,
+      "sweetness": 4.0,
+      "acidity": 1.5,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "liqueur",
+      "flavor": "coco",
+      "category": "modifier"
+    },
+    "campari": {
+      "name_fr": "Campari",
+      "name_en": [
+        "campari"
+      ],
+      "strength": 2.5,
+      "sweetness": 2.0,
+      "acidity": 1.5,
+      "bitterness": 4.5,
+      "freshness": 2.0,
+      "type": "bitter",
+      "flavor": "amer herbes",
+      "category": "modifier"
+    },
+    "aperol": {
+      "name_fr": "Aperol",
+      "name_en": [
+        "aperol"
+      ],
+      "strength": 2.5,
+      "sweetness": 3.0,
+      "acidity": 2.5,
+      "bitterness": 4.5,
+      "freshness": 3.0,
+      "type": "bitter",
+      "flavor": "orange amere",
+      "category": "modifier"
+    },
+    "chartreuse verte": {
+      "name_fr": "Chartreuse verte",
+      "name_en": [
+        "green chartreuse",
+        "chartreuse"
+      ],
+      "strength": 3.5,
+      "sweetness": 3.0,
+      "acidity": 1.5,
+      "bitterness": 3.0,
+      "freshness": 2.0,
+      "type": "herbal",
+      "flavor": "herbes complexes",
+      "category": "modifier"
+    },
+    "benedictine": {
+      "name_fr": "Benedictine",
+      "name_en": [
+        "benedictine"
+      ],
+      "strength": 3.5,
+      "sweetness": 3.5,
+      "acidity": 1.5,
+      "bitterness": 3.0,
+      "freshness": 2.0,
+      "type": "herbal",
+      "flavor": "miel herbes",
+      "category": "modifier"
+    },
+    "sirop simple": {
+      "name_fr": "Sirop simple",
+      "name_en": [
+        "simple syrup",
+        "sugar syrup"
+      ],
+      "strength": 1.5,
+      "sweetness": 5.0,
+      "acidity": 1.5,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "syrup",
+      "flavor": "sucre",
+      "category": "modifier"
+    },
+    "sirop de grenadine": {
+      "name_fr": "Sirop de grenadine",
+      "name_en": [
+        "grenadine",
+        "grenadine syrup"
+      ],
+      "strength": 1.5,
+      "sweetness": 5.0,
+      "acidity": 1.5,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "syrup",
+      "flavor": "grenade",
+      "category": "modifier"
+    },
+    "sirop d'orgeat": {
+      "name_fr": "Sirop d'orgeat",
+      "name_en": [
+        "orgeat",
+        "almond syrup"
+      ],
+      "strength": 1.5,
+      "sweetness": 5.0,
+      "acidity": 1.5,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "syrup",
+      "flavor": "amande fleur",
+      "category": "modifier"
+    },
+    "sirop de gingembre": {
+      "name_fr": "Sirop de gingembre",
+      "name_en": [
+        "ginger syrup"
+      ],
+      "strength": 1.5,
+      "sweetness": 5.0,
+      "acidity": 1.5,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "syrup",
+      "flavor": "gingembre",
+      "category": "modifier"
+    },
+    "miel liquide": {
+      "name_fr": "Miel liquide",
+      "name_en": [
+        "honey",
+        "liquid honey"
+      ],
+      "strength": 1.5,
+      "sweetness": 5.0,
+      "acidity": 1.5,
+      "bitterness": 2.0,
+      "freshness": 2.0,
+      "type": "syrup",
+      "flavor": "miel floral",
+      "category": "modifier"
+    }
+  },
+  "metadata": {
+    "version": "1.0",
+    "source": "generate_data.py",
+    "total_ingredients": 60,
+    "exported_at": "2026-02-02"
+  }
+}
