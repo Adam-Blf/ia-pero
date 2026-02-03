@@ -1120,8 +1120,8 @@ def main():
     # Render header
     render_header()
 
-    # Control tabs (filters, search, stats)
-    render_control_tabs()
+    # Control tabs disabled - filters use default values
+    # render_control_tabs()
 
     st.markdown('<div class="art-deco-divider">&#9670;</div>', unsafe_allow_html=True)
 

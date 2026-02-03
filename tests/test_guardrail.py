@@ -12,7 +12,7 @@ from playwright.sync_api import Page, expect
 STREAMLIT_URL = "http://localhost:8501"
 INPUT_PLACEHOLDER = "Un cocktail fruite et rafraichissant..."
 BUTTON_TEXT = "Invoquer le Barman"
-ERROR_TEXT = "Désolé"  # Part of the guardrail error message
+ERROR_TEXT = "Desole"  # Part of the guardrail error message (no accent in code)
 
 
 # =============================================================================
@@ -34,7 +34,7 @@ class TestGuardrail:
     def test_off_topic_query_shows_error(self, page: Page):
         """
         SCENARIO: User asks an off-topic question (bike repair)
-        EXPECTED: Guardrail rejects with "Désolé..." message
+        EXPECTED: Guardrail rejects with "Desole..." message
         """
         # Find the text input by placeholder
         input_field = page.get_by_placeholder(INPUT_PLACEHOLDER)
@@ -46,7 +46,7 @@ class TestGuardrail:
 
         # Wait for and verify error message appears
         page.wait_for_timeout(5000)  # Wait for SBERT model loading + processing
-        error_element = page.locator("text=Désolé")
+        error_element = page.locator("text=Desole")
         expect(error_element).to_be_visible(timeout=15000)
 
     def test_cocktail_query_shows_recipe(self, page: Page):
@@ -67,7 +67,7 @@ class TestGuardrail:
 
         # Verify recipe card appears (contains "Ingredients" section)
         # or the cocktail name appears
-        recipe_section = page.locator("text=Ingredients")
+        recipe_section = page.locator("text=📜 Ingredients").first
         expect(recipe_section).to_be_visible(timeout=15000)
 
 
@@ -94,7 +94,7 @@ class TestGuardrailFlow:
 
         # Wait and verify error
         page.wait_for_timeout(5000)
-        error_element = page.locator("text=Désolé")
+        error_element = page.locator("text=Desole")
         expect(error_element).to_be_visible(timeout=15000)
 
         # STEP 2: Clear and submit valid query
@@ -111,7 +111,7 @@ class TestGuardrailFlow:
 
         # Wait and verify recipe
         page.wait_for_timeout(5000)
-        recipe_section = page.locator("text=Ingredients")
+        recipe_section = page.locator("text=📜 Ingredients").first
         expect(recipe_section).to_be_visible(timeout=15000)
 
 
