@@ -957,7 +957,6 @@ def render_header():
                 <p class="speakeasy-subtitle" style="margin: 0;">~ Le Bar Secret ~</p>
             </div>
         </div>
-        <div class="art-deco-divider">&#9670; &#9670; &#9670;</div>
     """, unsafe_allow_html=True)
 
 
