@@ -1,8 +1,11 @@
 # L'IA Pero
 
 ![Status](https://img.shields.io/badge/status-production%20ready-green)
-![Python](https://img.shields.io/badge/python-3.9+-blue)
-![Streamlit](https://img.shields.io/badge/streamlit-1.35+-red)
+![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?logo=streamlit&logoColor=white)
+![SBERT](https://img.shields.io/badge/Sentence--Transformers-FFD21E?logo=huggingface&logoColor=black)
+![Gemini](https://img.shields.io/badge/Gemini-8E75B2?logo=google&logoColor=white)
+![EFREI M1](https://img.shields.io/badge/EFREI-M1_Data_Eng-000091)
 ![RNCP](https://img.shields.io/badge/RNCP-Bloc%202%20Valid%C3%A9-gold)
 
 Application de recommandation de cocktails utilisant **NLP semantique (SBERT)** et **generation GenAI (Google Gemini)**.
