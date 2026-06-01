@@ -19,6 +19,32 @@ Application de recommandation de cocktails utilisant **NLP semantique (SBERT)** 
 **Tutrice** : MALAEB Sarah
 **Formation** : EFREI Paris - Mastere Data Engineering et IA
 
+## Architecture
+
+```mermaid
+flowchart TB
+    Entry["app.py<br/>Streamlit · explorateur de similarité sémantique"]
+    Speak["src/app.py<br/>interface Speakeasy · questionnaire cocktails"]
+    Backend["src/backend.py<br/>RAG · guardrail sémantique · génération"]
+    Embed["src/embeddings.py<br/>SBERT all-MiniLM-L6-v2 · matrice de similarité"]
+    Profiler["src/ingredient_profiler.py<br/>profil gustatif des ingrédients"]
+    Utils["src/utils.py<br/>parsing · formatage des scores"]
+    Kaggle["src/kaggle_integration.py<br/>enrichissement dataset Kaggle"]
+    Data["data/<br/>cocktails.csv · known_ingredients.json"]
+    Gemini["Google Gemini<br/>génération de recette · mode fallback"]
+    Cache["cache JSON<br/>recettes déjà générées"]
+
+    Entry --> Embed
+    Entry --> Utils
+    Speak --> Backend
+    Backend --> Embed
+    Backend --> Profiler
+    Backend --> Cache
+    Backend --> Gemini
+    Embed --> Data
+    Kaggle --> Data
+```
+
 ## Documentation
 
 | Document | Description |
