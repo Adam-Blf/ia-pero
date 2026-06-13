@@ -1,12 +1,13 @@
 """
-L'IA Pero - Speakeasy Cocktail Experience
-Frontend immersif theme bar clandestin annees 1920
+L'IA Pero - Cocktail Lab
+Frontend EFREI-branded · IA cocktail generator
 Enhanced with: History, Filters, SBERT Search, Analytics, Export PDF
 """
 import sys
 import re
 import time
 import json
+import base64
 import logging
 from pathlib import Path
 from datetime import datetime
@@ -47,25 +48,28 @@ SURPRISE_QUERIES = [
 # PAGE CONFIGURATION (must be first Streamlit command)
 # =============================================================================
 st.set_page_config(
-    page_title="L'IA Pero | Speakeasy",
-    page_icon="🥃",
+    page_title="L'IA Pero · EFREI",
+    page_icon="🍸",
     layout="wide",
 )
 
 
 # =============================================================================
-# SPEAKEASY CSS THEME (Enhanced with sidebar styling)
+# EFREI BRAND CSS THEME
 # =============================================================================
-SPEAKEASY_CSS = """
+EFREI_CSS = """
 <style>
 /* =============================================================================
-   SPEAKEASY THEME - Bar Clandestin Annees 1920
-   Palette: Noir profond (#0D0D0D), Or (#D4AF37, #FFD700), Creme (#F5E6C8)
+   EFREI BRAND THEME - Identite Visuelle EFREI Paris
+   Palette: Deep navy (#051832 / #0B1B34), EFREI blue (#163767),
+            Pink accent (#FF43B8), Bright blue (#0C78B4), White (#FFFFFF)
    ============================================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
 
 /* ----- Global Reset & Base ----- */
 .stApp {
-    background: linear-gradient(180deg, #0D0D0D 0%, #1A1A1A 50%, #0D0D0D 100%);
+    background: linear-gradient(180deg, #051832 0%, #0B1B34 60%, #051832 100%);
     background-attachment: fixed;
 }
 
@@ -76,53 +80,66 @@ SPEAKEASY_CSS = """
 
 /* ----- Panel Styling ----- */
 .main-panel {
-    background: linear-gradient(180deg, rgba(13, 13, 13, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%);
-    border: 1px solid rgba(212, 175, 55, 0.3);
-    border-radius: 4px;
+    background: rgba(22, 55, 103, 0.25);
+    border: 1px solid rgba(255, 67, 184, 0.2);
+    border-radius: 10px;
     padding: 1.5rem;
     margin: 1rem 0;
 }
 
 /* ----- Typography ----- */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Cormorant+Garamond:wght@400;500;600&display=swap');
-
 h1, h2, h3 {
-    font-family: 'Playfair Display', serif !important;
-    color: #D4AF37 !important;
-    text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+    font-family: 'Montserrat', sans-serif !important;
+    color: #FFFFFF !important;
+    letter-spacing: 0.02em;
 }
 
 p, span, label, .stMarkdown {
-    font-family: 'Cormorant Garamond', serif !important;
-    color: #F5E6C8 !important;
+    font-family: 'Inter', sans-serif !important;
+    color: #FFFFFF !important;
 }
 
 /* ----- Main Header ----- */
-.speakeasy-header {
+.efrei-header {
     text-align: center;
-    padding: 2rem 0 3rem 0;
-    border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+    padding: 2rem 2rem 2.5rem 2rem;
+    border-bottom: 1px solid rgba(255, 67, 184, 0.25);
     margin-bottom: 2rem;
+    background: linear-gradient(135deg, rgba(22, 55, 103, 0.35) 0%, rgba(5, 24, 50, 0.55) 100%);
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
 }
 
-.speakeasy-header h1 {
-    font-size: 3.5rem;
-    letter-spacing: 0.3em;
+.efrei-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #FF43B8, #0C78B4, #FF43B8, transparent);
+}
+
+.efrei-header h1 {
+    font-size: 2.8rem !important;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    margin-bottom: 0.5rem;
-    animation: golden-glow 3s ease-in-out infinite alternate;
+    margin-bottom: 0.4rem;
+    color: #FF43B8 !important;
+    text-shadow: 0 0 30px rgba(255, 67, 184, 0.4);
+    animation: efrei-pulse 4s ease-in-out infinite alternate;
 }
 
-.speakeasy-subtitle {
-    font-size: 1.2rem;
-    color: #A89968 !important;
+.efrei-subtitle {
+    font-size: 0.95rem;
+    color: #5A6B82 !important;
     font-style: italic;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.12em;
+    font-family: 'Inter', sans-serif !important;
 }
 
-@keyframes golden-glow {
-    from { text-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
-    to { text-shadow: 0 0 30px rgba(212, 175, 55, 0.6), 0 0 60px rgba(255, 215, 0, 0.2); }
+@keyframes efrei-pulse {
+    from { text-shadow: 0 0 10px rgba(255, 67, 184, 0.3); }
+    to { text-shadow: 0 0 30px rgba(255, 67, 184, 0.6), 0 0 60px rgba(12, 120, 180, 0.2); }
 }
 
 /* ----- Decorative Dividers ----- */
@@ -131,9 +148,9 @@ p, span, label, .stMarkdown {
     align-items: center;
     justify-content: center;
     margin: 2rem 0;
-    color: #D4AF37;
-    font-size: 1.5rem;
-    letter-spacing: 1rem;
+    color: #FF43B8;
+    font-size: 1.1rem;
+    letter-spacing: 0.6rem;
 }
 
 .art-deco-divider::before,
@@ -141,71 +158,73 @@ p, span, label, .stMarkdown {
     content: '';
     flex: 1;
     height: 1px;
-    background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+    background: linear-gradient(90deg, transparent, #FF43B8, #0C78B4, transparent);
     margin: 0 1rem;
 }
 
 /* ----- Input Styling ----- */
 .stTextInput > div > div > input {
-    background: rgba(26, 26, 26, 0.9) !important;
-    border: 2px solid #D4AF37 !important;
-    border-radius: 0 !important;
-    color: #F5E6C8 !important;
-    font-family: 'Cormorant Garamond', serif !important;
-    font-size: 1.2rem !important;
-    padding: 1rem 1.5rem !important;
+    background: rgba(11, 27, 52, 0.9) !important;
+    border: 2px solid rgba(12, 120, 180, 0.5) !important;
+    border-radius: 8px !important;
+    color: #FFFFFF !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 1.05rem !important;
+    padding: 0.85rem 1.2rem !important;
     transition: all 0.3s ease;
 }
 
 .stTextInput > div > div > input:focus {
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.4) !important;
-    border-color: #FFD700 !important;
+    box-shadow: 0 0 18px rgba(255, 67, 184, 0.3) !important;
+    border-color: #FF43B8 !important;
 }
 
 .stTextInput > div > div > input::placeholder {
-    color: #A89968 !important;
+    color: #5A6B82 !important;
     font-style: italic;
 }
 
 /* ----- Selectbox Styling ----- */
 .stSelectbox > div > div {
-    background: rgba(26, 26, 26, 0.9) !important;
-    border: 1px solid #D4AF37 !important;
-    color: #F5E6C8 !important;
+    background: rgba(11, 27, 52, 0.9) !important;
+    border: 1px solid rgba(12, 120, 180, 0.4) !important;
+    color: #FFFFFF !important;
+    border-radius: 8px !important;
 }
 
 /* ----- Button Styling ----- */
 .stButton > button {
-    background: linear-gradient(135deg, #D4AF37 0%, #A89968 100%) !important;
-    color: #0D0D0D !important;
+    background: linear-gradient(135deg, #FF43B8 0%, #163767 100%) !important;
+    color: #FFFFFF !important;
     border: none !important;
-    border-radius: 0 !important;
-    font-family: 'Playfair Display', serif !important;
-    font-weight: 600 !important;
-    font-size: 1.1rem !important;
-    letter-spacing: 0.2em !important;
+    border-radius: 8px !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 0.9rem !important;
+    letter-spacing: 0.1em !important;
     text-transform: uppercase !important;
-    padding: 0.8rem 2rem !important;
+    padding: 0.75rem 1.8rem !important;
     transition: all 0.3s ease !important;
 }
 
 .stButton > button:hover {
-    background: linear-gradient(135deg, #FFD700 0%, #D4AF37 100%) !important;
-    box-shadow: 0 0 30px rgba(212, 175, 55, 0.5) !important;
+    background: linear-gradient(135deg, #FF43B8 0%, #0C78B4 100%) !important;
+    box-shadow: 0 0 26px rgba(255, 67, 184, 0.45) !important;
     transform: translateY(-2px);
 }
 
 /* ----- Secondary Button ----- */
 .stButton > button[kind="secondary"] {
     background: transparent !important;
-    border: 1px solid #D4AF37 !important;
-    color: #D4AF37 !important;
+    border: 1px solid #0C78B4 !important;
+    color: #0C78B4 !important;
 }
 
 /* ----- Cocktail Card ----- */
 .cocktail-card {
-    background: linear-gradient(145deg, rgba(26, 26, 26, 0.95), rgba(13, 13, 13, 0.98));
-    border: 1px solid #D4AF37;
+    background: linear-gradient(145deg, rgba(22, 55, 103, 0.3), rgba(11, 27, 52, 0.6));
+    border: 1px solid rgba(255, 67, 184, 0.3);
+    border-radius: 12px;
     padding: 2rem;
     margin: 2rem 0;
     position: relative;
@@ -218,85 +237,94 @@ p, span, label, .stMarkdown {
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, transparent, #D4AF37, #FFD700, #D4AF37, transparent);
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #FF43B8, #0C78B4, #FF43B8, transparent);
 }
 
 /* ----- History Item ----- */
 .history-item {
-    background: rgba(26, 26, 26, 0.8);
-    border: 1px solid rgba(212, 175, 55, 0.3);
-    border-left: 3px solid #D4AF37;
+    background: rgba(22, 55, 103, 0.3);
+    border: 1px solid rgba(12, 120, 180, 0.3);
+    border-left: 3px solid #0C78B4;
     padding: 0.8rem;
     margin: 0.5rem 0;
     cursor: pointer;
     transition: all 0.2s ease;
+    border-radius: 4px;
 }
 
 .history-item:hover {
-    background: rgba(212, 175, 55, 0.1);
-    border-color: #D4AF37;
+    background: rgba(255, 67, 184, 0.08);
+    border-color: #FF43B8;
 }
 
 /* ----- Metrics Box ----- */
 .metrics-box {
-    background: rgba(26, 26, 26, 0.8);
-    border: 1px solid rgba(212, 175, 55, 0.3);
+    background: rgba(22, 55, 103, 0.3);
+    border: 1px solid rgba(12, 120, 180, 0.3);
     padding: 1rem;
     margin: 0.5rem 0;
     text-align: center;
+    border-radius: 8px;
 }
 
 .metrics-value {
     font-size: 1.5rem;
-    color: #FFD700;
+    color: #FF43B8;
     font-weight: bold;
 }
 
 .metrics-label {
     font-size: 0.8rem;
-    color: #A89968;
+    color: #5A6B82;
     text-transform: uppercase;
 }
 
 /* ----- Error Message ----- */
 .error-speakeasy {
-    background: linear-gradient(135deg, rgba(139, 69, 69, 0.3), rgba(80, 40, 40, 0.5));
-    border: 1px solid #8B4545;
-    border-left: 4px solid #CD5C5C;
+    background: linear-gradient(135deg, rgba(22, 55, 103, 0.3), rgba(11, 27, 52, 0.5));
+    border: 1px solid rgba(255, 67, 184, 0.4);
+    border-left: 4px solid #FF43B8;
     padding: 1.5rem;
     margin: 2rem 0;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.1rem;
-    color: #F5E6C8;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    color: #FFFFFF;
     text-align: center;
+    border-radius: 8px;
 }
 
 /* ----- Empty State ----- */
 .empty-state {
     text-align: center;
     padding: 4rem 2rem;
-    color: #A89968;
+    color: #5A6B82;
 }
 
 .empty-state-icon {
     font-size: 4rem;
     margin-bottom: 1rem;
-    opacity: 0.6;
+    opacity: 0.7;
 }
 
 .empty-state-text {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.3rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
     font-style: italic;
-    color: #A89968;
+    color: #5A6B82;
+}
+
+/* ----- Sidebar ----- */
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #0B1B34 0%, #051832 100%) !important;
+    border-right: 1px solid rgba(12, 120, 180, 0.2) !important;
 }
 
 /* ----- Responsive Adjustments ----- */
 @media (max-width: 768px) {
-    .speakeasy-header h1 {
-        font-size: 2rem;
-        letter-spacing: 0.15em;
+    .efrei-header h1 {
+        font-size: 1.8rem !important;
+        letter-spacing: 0.04em;
     }
 }
 </style>
