@@ -25,14 +25,14 @@ Application de recommandation de cocktails utilisant **NLP semantique (SBERT)** 
 flowchart TB
     Entry["app.py<br/>Streamlit · explorateur de similarité sémantique"]
     Speak["src/app.py<br/>interface Speakeasy · questionnaire cocktails"]
-    Backend["src/backend.py<br/>RAG · guardrail sémantique · génération"]
-    Embed["src/embeddings.py<br/>SBERT all-MiniLM-L6-v2 · matrice de similarité"]
+    Backend["src/backend.py<br/>RAG · guardrail 3 niveaux · génération"]
+    Embed["src/embeddings.py<br/>SBERT all-MiniLM-L6-v2 · FAISS IndexFlatIP"]
     Profiler["src/ingredient_profiler.py<br/>profil gustatif des ingrédients"]
     Utils["src/utils.py<br/>parsing · formatage des scores"]
-    Kaggle["src/kaggle_integration.py<br/>enrichissement dataset Kaggle"]
+    Kaggle["src/kaggle_integration.py<br/>enrichissement dataset Kaggle · credentials gate"]
     Data["data/<br/>cocktails.csv · known_ingredients.json"]
     Gemini["Google Gemini<br/>génération de recette · mode fallback"]
-    Cache["cache JSON<br/>recettes déjà générées"]
+    Cache["cache SQLite<br/>data/recipe_cache.db · clé MD5 · persistant"]
 
     Entry --> Embed
     Entry --> Utils
@@ -67,8 +67,32 @@ flowchart TB
 - [x] **Questionnaire Hybride** (texte libre + dropdown Budget)
 - [x] **Graphique Radar Plotly** (profil gustatif 7 dimensions)
 - [x] **Generation GenAI** (Google Gemini)
-- [x] **Cache JSON** (optimisation des couts API)
+- [x] **Cache SQLite persistant** (survit aux redemarrages, borne les appels Gemini)
 - [x] **600+ cocktails** dans la base de donnees (extensible a 1600 via Kaggle)
+
+### Nouveautes v3.0
+
+- [x] **FAISS IndexFlatIP** - recherche Top-K cosinus exacte (remplace la matrice numpy)
+- [x] **Cache SQLite persistant** - clé MD5, survit aux redémarrages, teste unitairement
+- [x] **Mode dégradé explicite** - bannière non-bloquante quand GOOGLE_API_KEY absent
+- [x] **Guardrail 3 niveaux** :
+  - L1 : correspondance lexicale cocktail (instantané)
+  - L2a : zone grise SBERT [0.20-0.35[ + mots-clés de secours (rescue)
+  - L2b : filtre hors-domaine (vélo, pizza…) → seuil strict 0.50
+  - `reason` toujours exposé dans la réponse
+- [x] **Jeu d'éval étiqueté** - 38 requêtes (23 in-domain + 15 out-of-domain)
+- [x] **`scripts/evaluate.py`** - hit@5 + taux de bon refus + rapport before/after
+- [x] **`scripts/eval_genai.py`** - faithfulness + answer_relevancy (LLM-as-judge, gaté derrière GOOGLE_API_KEY)
+- [x] **`has_kaggle_credentials()`** - gate credentials avant tout appel Kaggle
+
+### Métriques d'évaluation (v3.0)
+
+| Metric | Before (v2.x) | After (v3.0) | Delta |
+|--------|---------------|--------------|-------|
+| hit@5 (recherche SBERT) | 91.3% | 91.3% | — |
+| correct-refusal rate (guardrail) | 86.7% | **100.0%** | **+13.3%** |
+
+Détails complets : `reports/EVALUATION.md`
 
 ### Nouveautes v2.2
 
@@ -110,17 +134,18 @@ Cette section documente les decisions techniques prises pour valider les compete
 
 **Alternative rejetee** : OpenAI text-embedding-3 (cout par token, latence reseau, dependance externe)
 
-### Pourquoi Cache JSON ?
+### Pourquoi Cache SQLite ?
 
 | Critere | Justification |
 |---------|---------------|
 | **Optimisation industrielle des couts API** | Evite les appels redondants a Gemini (15 req/min gratuit) |
 | **Reduction latence** | Reponse instantanee (~5ms) pour requetes deja vues vs ~2s pour API |
-| **Simplicite** | Pas de dependance externe (Redis, Memcached, DynamoDB) |
-| **Persistance** | Survit aux redemarrages de l'application |
-| **Auditabilite** | Fichier JSON lisible pour debug et analyse |
+| **Persistance** | Survit aux redemarrages (fichier disque, non volatil) |
+| **Fiabilite** | ACID transactions, pas de corruption JSON sur crash |
+| **Tests** | 6 tests unitaires (test_sqlite_cache.py) valident le round-trip |
 
-**Implementation** : Cle MD5 de la requete normalisee → Lookup O(1)
+**Implementation** : Cle MD5 de la requete normalisee → `data/recipe_cache.db`
+(upsert SQLite, O(1) lookup par index PRIMARY KEY)
 
 ### Pourquoi Seuil 0.35 ?
 

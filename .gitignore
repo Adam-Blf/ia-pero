@@ -216,4 +216,5 @@ data/kaggle_cocktails_enriched.csv
 # =============================================================================
 data/eval/*.jsonl.tmp
 reports/EVALUATION_*.md
+reports/EVAL_GENAI*.md
 *.faiss
