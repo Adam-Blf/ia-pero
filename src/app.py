@@ -59,97 +59,107 @@ st.set_page_config(
 EFREI_CSS = """
 <style>
 /* =============================================================================
-   EFREI BRAND THEME - Identite Visuelle EFREI Paris
-   Palette: Deep navy (#051832 / #0B1B34), EFREI blue (#163767),
-            Pink accent (#FF43B8), Bright blue (#0C78B4), White (#FFFFFF)
+   EFREI Design System · L'IA Pero
+   Primary blue   : #163767
+   Pink accent    : #FF43B8
+   Deep navy      : #051832 / #0B1B34
+   Bright blue    : #0C78B4
+   Text           : #FFFFFF / muted #A9B8D6
+   Font           : Poppins (Google) · Arial fallback
    ============================================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 
-/* ----- Global Reset & Base ----- */
-.stApp {
-    background: linear-gradient(180deg, #051832 0%, #0B1B34 60%, #051832 100%);
-    background-attachment: fixed;
+/* ----- CSS Custom Properties ----- */
+:root {
+    --navy:       #051832;
+    --surface:    #0B1B34;
+    --blue:       #163767;
+    --pink:       #FF43B8;
+    --sky:        #0C78B4;
+    --text:       #FFFFFF;
+    --muted:      #A9B8D6;
+    --border:     rgba(22, 55, 103, 0.65);
+    --radius:     10px;
 }
 
-/* Hide Streamlit branding */
+/* ----- Global Base ----- */
+.stApp {
+    background-color: var(--navy) !important;
+    font-family: 'Poppins', Arial, sans-serif !important;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* Hide Streamlit chrome */
 #MainMenu, footer, header {
     visibility: hidden;
 }
 
-/* ----- Panel Styling ----- */
-.main-panel {
-    background: rgba(22, 55, 103, 0.25);
-    border: 1px solid rgba(255, 67, 184, 0.2);
-    border-radius: 10px;
-    padding: 1.5rem;
-    margin: 1rem 0;
+/* Main block container */
+.block-container {
+    padding-top: 1.5rem !important;
+    max-width: 940px !important;
 }
 
 /* ----- Typography ----- */
-h1, h2, h3 {
-    font-family: 'Montserrat', sans-serif !important;
-    color: #FFFFFF !important;
-    letter-spacing: 0.02em;
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', Arial, sans-serif !important;
+    color: var(--text) !important;
 }
 
-p, span, label, .stMarkdown {
-    font-family: 'Inter', sans-serif !important;
-    color: #FFFFFF !important;
+p, span, div, label, li,
+.stMarkdown, .stMarkdown p {
+    font-family: 'Poppins', Arial, sans-serif !important;
+    color: var(--text) !important;
 }
 
 /* ----- Main Header ----- */
 .efrei-header {
     text-align: center;
-    padding: 2rem 2rem 2.5rem 2rem;
-    border-bottom: 1px solid rgba(255, 67, 184, 0.25);
-    margin-bottom: 2rem;
-    background: linear-gradient(135deg, rgba(22, 55, 103, 0.35) 0%, rgba(5, 24, 50, 0.55) 100%);
-    border-radius: 12px;
-    position: relative;
-    overflow: hidden;
+    padding: 2.25rem 2rem 2rem;
+    margin-bottom: 1.75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--pink);
+    border-radius: var(--radius);
 }
 
-.efrei-header::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, #FF43B8, #0C78B4, #FF43B8, transparent);
+.efrei-logo {
+    height: 48px;
+    width: auto;
+    display: block;
+    margin: 0 auto 1.1rem;
 }
 
 .efrei-header h1 {
-    font-size: 2.8rem !important;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 0.4rem;
-    color: #FF43B8 !important;
-    text-shadow: 0 0 30px rgba(255, 67, 184, 0.4);
-    animation: efrei-pulse 4s ease-in-out infinite alternate;
+    font-size: 2.5rem !important;
+    font-weight: 800 !important;
+    color: var(--text) !important;
+    letter-spacing: 0.04em;
+    margin: 0 0 0.35rem !important;
 }
 
 .efrei-subtitle {
-    font-size: 0.95rem;
-    color: #5A6B82 !important;
-    font-style: italic;
-    letter-spacing: 0.12em;
-    font-family: 'Inter', sans-serif !important;
+    font-size: 0.875rem !important;
+    color: var(--muted) !important;
+    font-weight: 400 !important;
+    letter-spacing: 0.05em;
+    font-family: 'Poppins', Arial, sans-serif !important;
+    margin: 0 !important;
 }
 
-@keyframes efrei-pulse {
-    from { text-shadow: 0 0 10px rgba(255, 67, 184, 0.3); }
-    to { text-shadow: 0 0 30px rgba(255, 67, 184, 0.6), 0 0 60px rgba(12, 120, 180, 0.2); }
-}
-
-/* ----- Decorative Dividers ----- */
+/* ----- Divider ----- */
 .art-deco-divider {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 2rem 0;
-    color: #FF43B8;
-    font-size: 1.1rem;
-    letter-spacing: 0.6rem;
+    margin: 1.5rem 0;
+    color: var(--pink);
+    font-size: 0.9rem;
+    letter-spacing: 0.35rem;
 }
 
 .art-deco-divider::before,
@@ -157,173 +167,270 @@ p, span, label, .stMarkdown {
     content: '';
     flex: 1;
     height: 1px;
-    background: linear-gradient(90deg, transparent, #FF43B8, #0C78B4, transparent);
-    margin: 0 1rem;
+    background: linear-gradient(90deg, transparent, rgba(255, 67, 184, 0.45), transparent);
+    margin: 0 0.75rem;
 }
 
-/* ----- Input Styling ----- */
+/* ----- Text Input ----- */
 .stTextInput > div > div > input {
-    background: rgba(11, 27, 52, 0.9) !important;
-    border: 2px solid rgba(12, 120, 180, 0.5) !important;
-    border-radius: 8px !important;
-    color: #FFFFFF !important;
-    font-family: 'Inter', sans-serif !important;
-    font-size: 1.05rem !important;
-    padding: 0.85rem 1.2rem !important;
-    transition: all 0.3s ease;
+    background: var(--surface) !important;
+    border: 1.5px solid var(--blue) !important;
+    border-radius: var(--radius) !important;
+    color: var(--text) !important;
+    font-family: 'Poppins', Arial, sans-serif !important;
+    font-size: 1rem !important;
+    padding: 0.75rem 1rem !important;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .stTextInput > div > div > input:focus {
-    box-shadow: 0 0 18px rgba(255, 67, 184, 0.3) !important;
-    border-color: #FF43B8 !important;
+    border-color: var(--pink) !important;
+    box-shadow: 0 0 0 3px rgba(255, 67, 184, 0.15) !important;
+    outline: none !important;
 }
 
 .stTextInput > div > div > input::placeholder {
-    color: #5A6B82 !important;
+    color: var(--muted) !important;
     font-style: italic;
 }
 
-/* ----- Selectbox Styling ----- */
+/* ----- Selectbox ----- */
 .stSelectbox > div > div {
-    background: rgba(11, 27, 52, 0.9) !important;
-    border: 1px solid rgba(12, 120, 180, 0.4) !important;
-    color: #FFFFFF !important;
-    border-radius: 8px !important;
+    background: var(--surface) !important;
+    border: 1.5px solid var(--blue) !important;
+    color: var(--text) !important;
+    border-radius: var(--radius) !important;
+    font-family: 'Poppins', Arial, sans-serif !important;
 }
 
-/* ----- Button Styling ----- */
+/* ----- Buttons ----- */
 .stButton > button {
-    background: linear-gradient(135deg, #FF43B8 0%, #163767 100%) !important;
+    background: var(--pink) !important;
     color: #FFFFFF !important;
     border: none !important;
-    border-radius: 8px !important;
-    font-family: 'Montserrat', sans-serif !important;
-    font-weight: 700 !important;
-    font-size: 0.9rem !important;
-    letter-spacing: 0.1em !important;
-    text-transform: uppercase !important;
-    padding: 0.75rem 1.8rem !important;
-    transition: all 0.3s ease !important;
+    border-radius: var(--radius) !important;
+    font-family: 'Poppins', Arial, sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 0.875rem !important;
+    letter-spacing: 0.04em !important;
+    padding: 0.65rem 1.4rem !important;
+    transition: background 0.2s, box-shadow 0.2s !important;
 }
 
 .stButton > button:hover {
-    background: linear-gradient(135deg, #FF43B8 0%, #0C78B4 100%) !important;
-    box-shadow: 0 0 26px rgba(255, 67, 184, 0.45) !important;
-    transform: translateY(-2px);
+    background: #e6389e !important;
+    box-shadow: 0 4px 18px rgba(255, 67, 184, 0.32) !important;
 }
 
-/* ----- Secondary Button ----- */
+.stButton > button:active {
+    background: #cc2e8c !important;
+}
+
+/* Secondary (outline) */
 .stButton > button[kind="secondary"] {
     background: transparent !important;
-    border: 1px solid #0C78B4 !important;
-    color: #0C78B4 !important;
+    border: 1.5px solid var(--sky) !important;
+    color: var(--sky) !important;
+}
+
+.stButton > button[kind="secondary"]:hover {
+    background: rgba(12, 120, 180, 0.12) !important;
+    box-shadow: none !important;
+}
+
+/* Download button */
+.stDownloadButton > button {
+    background: var(--blue) !important;
+    color: var(--text) !important;
+    border: 1.5px solid var(--sky) !important;
+    border-radius: var(--radius) !important;
+    font-family: 'Poppins', Arial, sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 0.875rem !important;
+    padding: 0.65rem 1.4rem !important;
+    transition: background 0.2s !important;
+}
+
+.stDownloadButton > button:hover {
+    background: var(--sky) !important;
+    border-color: var(--sky) !important;
 }
 
 /* ----- Cocktail Card ----- */
 .cocktail-card {
-    background: linear-gradient(145deg, rgba(22, 55, 103, 0.3), rgba(11, 27, 52, 0.6));
-    border: 1px solid rgba(255, 67, 184, 0.3);
-    border-radius: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--pink);
+    border-radius: var(--radius);
     padding: 2rem;
-    margin: 2rem 0;
-    position: relative;
-    overflow: hidden;
-}
-
-.cocktail-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, #FF43B8, #0C78B4, #FF43B8, transparent);
+    margin: 1.75rem 0;
 }
 
 /* ----- History Item ----- */
 .history-item {
-    background: rgba(22, 55, 103, 0.3);
-    border: 1px solid rgba(12, 120, 180, 0.3);
-    border-left: 3px solid #0C78B4;
-    padding: 0.8rem;
-    margin: 0.5rem 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0.7rem 1rem;
+    margin: 0.4rem 0;
     cursor: pointer;
-    transition: all 0.2s ease;
-    border-radius: 4px;
+    transition: background 0.15s, border-color 0.15s;
+    border-radius: 8px;
 }
 
 .history-item:hover {
-    background: rgba(255, 67, 184, 0.08);
-    border-color: #FF43B8;
+    background: rgba(255, 67, 184, 0.07);
+    border-color: rgba(255, 67, 184, 0.4);
 }
 
 /* ----- Metrics Box ----- */
 .metrics-box {
-    background: rgba(22, 55, 103, 0.3);
-    border: 1px solid rgba(12, 120, 180, 0.3);
+    background: var(--surface);
+    border: 1px solid var(--border);
     padding: 1rem;
-    margin: 0.5rem 0;
     text-align: center;
     border-radius: 8px;
 }
 
 .metrics-value {
-    font-size: 1.5rem;
-    color: #FF43B8;
-    font-weight: bold;
+    font-size: 1.6rem;
+    color: var(--pink);
+    font-weight: 700;
+    font-family: 'Poppins', Arial, sans-serif;
 }
 
 .metrics-label {
-    font-size: 0.8rem;
-    color: #5A6B82;
-    text-transform: uppercase;
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-weight: 500;
+    font-family: 'Poppins', Arial, sans-serif;
 }
 
-/* ----- Error Message ----- */
+/* ----- Error / Guardrail State ----- */
 .error-speakeasy {
-    background: linear-gradient(135deg, rgba(22, 55, 103, 0.3), rgba(11, 27, 52, 0.5));
-    border: 1px solid rgba(255, 67, 184, 0.4);
-    border-left: 4px solid #FF43B8;
-    padding: 1.5rem;
-    margin: 2rem 0;
-    font-family: 'Inter', sans-serif;
-    font-size: 1rem;
-    color: #FFFFFF;
+    background: var(--surface);
+    border: 1px solid rgba(255, 67, 184, 0.45);
+    border-top: 3px solid var(--pink);
+    padding: 1.5rem 2rem;
+    margin: 1.75rem 0;
+    font-family: 'Poppins', Arial, sans-serif;
+    font-size: 0.95rem;
+    color: var(--text);
     text-align: center;
-    border-radius: 8px;
+    border-radius: var(--radius);
 }
 
 /* ----- Empty State ----- */
 .empty-state {
     text-align: center;
     padding: 4rem 2rem;
-    color: #5A6B82;
 }
 
 .empty-state-icon {
-    font-size: 4rem;
+    font-size: 3.5rem;
     margin-bottom: 1rem;
-    opacity: 0.7;
+    opacity: 0.55;
 }
 
 .empty-state-text {
-    font-family: 'Inter', sans-serif;
-    font-size: 1.1rem;
-    font-style: italic;
-    color: #5A6B82;
+    font-family: 'Poppins', Arial, sans-serif;
+    font-size: 1.05rem;
+    color: var(--muted);
+    line-height: 1.65;
 }
 
 /* ----- Sidebar ----- */
 [data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #0B1B34 0%, #051832 100%) !important;
-    border-right: 1px solid rgba(12, 120, 180, 0.2) !important;
+    background: var(--surface) !important;
+    border-right: 1px solid var(--border) !important;
 }
 
-/* ----- Responsive Adjustments ----- */
+[data-testid="stSidebar"] * {
+    font-family: 'Poppins', Arial, sans-serif !important;
+    color: var(--text) !important;
+}
+
+/* ----- Tabs ----- */
+.stTabs [data-baseweb="tab-list"] {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 4px;
+    gap: 2px;
+    border: 1px solid var(--border);
+}
+
+.stTabs [data-baseweb="tab"] {
+    background: transparent;
+    color: var(--muted) !important;
+    border-radius: 7px;
+    font-family: 'Poppins', Arial, sans-serif !important;
+    font-weight: 500 !important;
+    font-size: 0.85rem !important;
+    padding: 0.4rem 1rem !important;
+    transition: color 0.15s, background 0.15s;
+}
+
+.stTabs [aria-selected="true"] {
+    background: var(--blue) !important;
+    color: #FFFFFF !important;
+}
+
+.stTabs [data-baseweb="tab"]:hover:not([aria-selected="true"]) {
+    color: #FFFFFF !important;
+    background: rgba(22, 55, 103, 0.5) !important;
+}
+
+/* ----- Checkbox ----- */
+.stCheckbox span {
+    color: var(--muted) !important;
+    font-family: 'Poppins', Arial, sans-serif !important;
+}
+
+/* ----- Caption ----- */
+.stCaption, [data-testid="stCaption"] {
+    color: var(--muted) !important;
+    font-family: 'Poppins', Arial, sans-serif !important;
+}
+
+/* ----- Metric ----- */
+[data-testid="stMetric"] label {
+    color: var(--muted) !important;
+    font-family: 'Poppins', Arial, sans-serif !important;
+}
+
+[data-testid="stMetricValue"] {
+    color: var(--text) !important;
+    font-family: 'Poppins', Arial, sans-serif !important;
+}
+
+/* ----- Info box (st.info) ----- */
+[data-testid="stInfoMessage"] {
+    background: rgba(12, 120, 180, 0.12) !important;
+    border: 1px solid rgba(12, 120, 180, 0.38) !important;
+    border-radius: 8px !important;
+}
+
+[data-testid="stInfoMessage"] p {
+    color: var(--text) !important;
+}
+
+/* ----- Divider (st.divider) ----- */
+hr {
+    border-color: var(--border) !important;
+    margin: 1.25rem 0 !important;
+}
+
+/* ----- Spinner ----- */
+[data-testid="stSpinner"] p {
+    color: var(--muted) !important;
+}
+
+/* ----- Responsive ----- */
 @media (max-width: 768px) {
     .efrei-header h1 {
         font-size: 1.8rem !important;
-        letter-spacing: 0.04em;
+    }
+    .efrei-logo {
+        height: 38px;
     }
 }
 </style>
@@ -784,8 +891,8 @@ def generate_pdf_recipe(recipe: dict) -> bytes:
 # =============================================================================
 # CSS INJECTION
 # =============================================================================
-def inject_speakeasy_css():
-    """Inject custom CSS for Speakeasy theme."""
+def inject_efrei_css():
+    """Inject EFREI design system CSS."""
     st.markdown(EFREI_CSS, unsafe_allow_html=True)
 
 
@@ -806,26 +913,26 @@ def create_radar_chart(characteristics: dict) -> go.Figure:
         r=values_closed,
         theta=categories_closed,
         fill='toself',
-        fillcolor='rgba(212, 175, 55, 0.2)',
-        line=dict(color='#D4AF37', width=2),
-        marker=dict(color='#FFD700', size=8, symbol='diamond'),
+        fillcolor='rgba(255, 67, 184, 0.14)',
+        line=dict(color='#FF43B8', width=2.5),
+        marker=dict(color='#0C78B4', size=7, symbol='circle'),
         name='Profil'
     ))
 
     fig.update_layout(
         polar=dict(
-            bgcolor='rgba(0, 0, 0, 0)',
+            bgcolor='rgba(11, 27, 52, 0.5)',
             radialaxis=dict(
                 visible=True,
                 range=[0, 5],
                 showline=False,
-                gridcolor='rgba(212, 175, 55, 0.2)',
-                tickfont=dict(color='#A89968', family='Cormorant Garamond'),
+                gridcolor='rgba(12, 120, 180, 0.22)',
+                tickfont=dict(color='#A9B8D6', family='Poppins, Arial, sans-serif', size=10),
             ),
             angularaxis=dict(
-                gridcolor='rgba(212, 175, 55, 0.3)',
-                linecolor='rgba(212, 175, 55, 0.5)',
-                tickfont=dict(color='#D4AF37', size=12, family='Cormorant Garamond'),
+                gridcolor='rgba(22, 55, 103, 0.6)',
+                linecolor='rgba(22, 55, 103, 0.8)',
+                tickfont=dict(color='#A9B8D6', size=11, family='Poppins, Arial, sans-serif'),
             ),
         ),
         showlegend=False,
@@ -962,27 +1069,22 @@ def render_control_tabs():
 # UI COMPONENTS
 # =============================================================================
 def render_header():
-    """Render Speakeasy header with minimalist martini logo and title."""
-    # Clean minimalist martini glass logo
-    logo_svg = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="70" height="70" style="margin-right: 1rem;">
-      <defs><linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#B8860B"/></linearGradient></defs>
-      <circle cx="50" cy="50" r="47" fill="#0D0D0D" stroke="url(#gold)" stroke-width="2"/>
-      <path d="M30 25 L70 25 L50 55 L50 72" fill="none" stroke="url(#gold)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M40 72 L60 72" stroke="url(#gold)" stroke-width="2.5" stroke-linecap="round"/>
-      <path d="M38 76 L62 76" stroke="url(#gold)" stroke-width="2.5" stroke-linecap="round"/>
-      <path d="M35 30 L65 30 L50 50 Z" fill="url(#gold)" opacity="0.3"/>
-      <circle cx="55" cy="35" r="4" fill="#D4AF37"/>
-      <line x1="45" y1="28" x2="58" y2="38" stroke="url(#gold)" stroke-width="1.5"/>
-    </svg>'''
+    """Render EFREI-branded header with logo, app title and subtitle."""
+    import base64
+
+    logo_path = Path(__file__).parent.parent / "assets" / "Logo-Efrei-Blanc.png"
+    if logo_path.exists():
+        with open(logo_path, "rb") as _f:
+            _b64 = base64.b64encode(_f.read()).decode()
+        logo_tag = f'<img src="data:image/png;base64,{_b64}" alt="EFREI Paris" class="efrei-logo">'
+    else:
+        logo_tag = '<span style="color:#FF43B8;font-size:1.4rem;font-weight:800;letter-spacing:0.1em;">EFREI</span>'
 
     st.markdown(f"""
-        <div class="speakeasy-header" style="display: flex; align-items: center; justify-content: center; gap: 0;">
-            {logo_svg}
-            <div style="text-align: left;">
-                <h1 style="margin: 0;">L'IA Pero</h1>
-                <p class="speakeasy-subtitle" style="margin: 0;">~ Le Bar Secret ~</p>
-            </div>
+        <div class="efrei-header">
+            {logo_tag}
+            <h1>L\'IA Pero</h1>
+            <p class="efrei-subtitle">Laboratoire de cocktails · Intelligence Artificielle · EFREI Paris</p>
         </div>
     """, unsafe_allow_html=True)
 
@@ -995,8 +1097,8 @@ def render_cocktail_input() -> tuple[str, str, bool]:
         tuple: (query, budget, is_surprise)
     """
     st.markdown("""
-        <p style="text-align: center; font-size: 1.2rem; margin-bottom: 1rem;">
-            <em>Chuchotez votre envie au barman...</em>
+        <p style="text-align: center; font-size: 1.1rem; color: #A9B8D6; margin-bottom: 1rem; font-family: Poppins, Arial, sans-serif;">
+            <em>Décrivez votre envie, le barman s'occupe du reste...</em>
         </p>
     """, unsafe_allow_html=True)
 
@@ -1011,7 +1113,7 @@ def render_cocktail_input() -> tuple[str, str, bool]:
         )
 
         st.markdown("""
-            <p style="font-size: 0.95rem; color: #A89968; margin: 0.8rem 0 0.3rem 0;">
+            <p style="font-size: 0.875rem; color: #A9B8D6; margin: 0.8rem 0 0.3rem 0;">
                 <em>Votre budget pour ce soir ?</em>
             </p>
         """, unsafe_allow_html=True)
@@ -1074,10 +1176,10 @@ def render_cocktail_card(recipe: dict, characteristics: dict, cached: bool = Fal
         with col1:
             title = f"## 🥃 {name}"
             if cached:
-                title += " <small style='color: #D4AF37; font-size: 0.5em;'>Du Cellier</small>"
+                title += " <small style='color: #FF43B8; font-size: 0.5em;'>Du Cellier</small>"
             # Add source badge
             if source == "kaggle":
-                title += " <small style='color: #87CEEB; font-size: 0.4em; background: rgba(135, 206, 235, 0.1); padding: 2px 6px; border-radius: 3px;'>Kaggle</small>"
+                title += " <small style='color: #0C78B4; font-size: 0.4em; background: rgba(12, 120, 180, 0.12); padding: 2px 6px; border-radius: 3px;'>Kaggle</small>"
             st.markdown(title, unsafe_allow_html=True)
         with col2:
             if duration > 0:
@@ -1140,14 +1242,25 @@ def main():
     # Initialize session state
     init_session_state()
 
-    # Inject CSS first
-    inject_speakeasy_css()
+    # Inject EFREI design system CSS
+    inject_efrei_css()
+
+    # Sidebar: EFREI logo
+    _logo_path = Path(__file__).parent.parent / "assets" / "Logo-Efrei-Blanc.png"
+    if _logo_path.exists():
+        st.sidebar.image(str(_logo_path), use_container_width=False, width=130)
+    st.sidebar.markdown(
+        "<p style='color:#A9B8D6;font-size:0.78rem;margin-top:0.5rem;font-family:Poppins,Arial,sans-serif;'>"
+        "L'IA Pero · Cocktail Lab</p>",
+        unsafe_allow_html=True,
+    )
+    st.sidebar.divider()
 
     # Render header
     render_header()
 
-    # Control tabs disabled - filters use default values
-    # render_control_tabs()
+    # Control tabs: filters, SBERT search, session stats
+    render_control_tabs()
 
     st.markdown('<div class="art-deco-divider">&#9670;</div>', unsafe_allow_html=True)
 
@@ -1232,13 +1345,13 @@ def main():
             # Show query used
             if is_surprise:
                 st.markdown(f"""
-                    <p style="text-align: center; color: #A89968; font-size: 0.9rem; margin-top: 2rem;">
+                    <p style="text-align: center; color: #A9B8D6; font-size: 0.9rem; margin-top: 2rem;">
                         <em>🎲 Inspiration aleatoire: "{query}"</em>
                     </p>
                 """, unsafe_allow_html=True)
             else:
                 st.markdown(f"""
-                    <p style="text-align: center; color: #A89968; font-size: 0.9rem; margin-top: 2rem;">
+                    <p style="text-align: center; color: #A9B8D6; font-size: 0.9rem; margin-top: 2rem;">
                         <em>Inspire par: "{recipe.get('query', query)}"</em>
                     </p>
                 """, unsafe_allow_html=True)
@@ -1253,14 +1366,14 @@ def render_footer():
     """Render footer with authors and disclaimer."""
     st.markdown("""
         <div class="art-deco-divider" style="margin-top: 3rem;">&#9670;</div>
-        <p style="text-align: center; color: #D4AF37; font-size: 0.85rem; margin-bottom: 0.5rem;">
-            <strong>Cree par Adam Beloucif & Émilien Morice</strong>
+        <p style="text-align: center; color: #FFFFFF; font-size: 0.85rem; margin-bottom: 0.4rem; font-family: Poppins, Arial, sans-serif;">
+            <strong>Adam Beloucif · Émilien Morice</strong>
         </p>
-        <p style="text-align: center; color: #A89968; font-size: 0.8rem;">
-            <em>RNCP Bloc 2 - Expert en Ingenierie de Donnees</em>
+        <p style="text-align: center; color: #A9B8D6; font-size: 0.8rem; font-family: Poppins, Arial, sans-serif;">
+            RNCP Bloc 2 · Expert en Ingénierie de Données · EFREI Paris
         </p>
-        <p style="text-align: center; color: #666; font-size: 0.75rem; margin-top: 1rem;">
-            <em>L'abus d'alcool est dangereux pour la sante</em>
+        <p style="text-align: center; color: #A9B8D6; font-size: 0.75rem; margin-top: 0.75rem; font-family: Poppins, Arial, sans-serif;">
+            L'abus d'alcool est dangereux pour la santé.
         </p>
     """, unsafe_allow_html=True)
 
