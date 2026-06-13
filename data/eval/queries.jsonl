@@ -1,0 +1,38 @@
+{"id": "id01", "type": "in-domain", "query": "Je veux un mojito classique", "expected_keywords": ["mojito", "menthe", "rhum", "citron"]}
+{"id": "id02", "type": "in-domain", "query": "Un cocktail tropical avec du rhum", "expected_keywords": ["rhum", "tropical", "rum", "ananas", "noix de coco", "coco"]}
+{"id": "id03", "type": "in-domain", "query": "Quelque chose de fruité et rafraîchissant", "expected_keywords": ["fruit", "frais", "tropical", "citron", "agrume"]}
+{"id": "id04", "type": "in-domain", "query": "Whisky sour bien équilibré", "expected_keywords": ["whisky", "whiskey", "bourbon", "citron", "sour"]}
+{"id": "id05", "type": "in-domain", "query": "Un negroni bien amer", "expected_keywords": ["negroni", "gin", "amer", "bitter", "campari", "vermouth"]}
+{"id": "id06", "type": "in-domain", "query": "Cocktail sans alcool pour l'été", "expected_keywords": ["sans alcool", "mocktail", "virgin", "sirop", "jus"]}
+{"id": "id07", "type": "in-domain", "query": "Boisson exotique avec des fruits tropicaux", "expected_keywords": ["ananas", "mangue", "coco", "tropical", "rhum", "fruit"]}
+{"id": "id08", "type": "in-domain", "query": "Un martini très sec", "expected_keywords": ["martini", "gin", "vodka", "vermouth", "olive"]}
+{"id": "id09", "type": "in-domain", "query": "Daiquiri à la fraise", "expected_keywords": ["daiquiri", "fraise", "rhum", "citron", "framboise"]}
+{"id": "id10", "type": "in-domain", "query": "Margarita avec citron vert et sel", "expected_keywords": ["margarita", "tequila", "citron", "lime", "sel"]}
+{"id": "id11", "type": "in-domain", "query": "Shot de tequila ou digestif fort", "expected_keywords": ["tequila", "shot", "digestif", "fort", "spirit"]}
+{"id": "id12", "type": "in-domain", "query": "Apéritif léger avec du gin", "expected_keywords": ["gin", "aperitif", "apéritif", "tonique", "tonic"]}
+{"id": "id13", "type": "in-domain", "query": "Vodka avec jus d'orange et bulles", "expected_keywords": ["vodka", "orange", "jus", "prosecco", "pétillant"]}
+{"id": "id14", "type": "in-domain", "query": "Punch tropical pour une fête", "expected_keywords": ["punch", "tropical", "fruit", "rhum", "fête"]}
+{"id": "id15", "type": "in-domain", "query": "Spritz à l'aperol ou au prosecco", "expected_keywords": ["spritz", "aperol", "prosecco", "bulles", "pétillant", "bitter"]}
+{"id": "id16", "type": "in-domain", "query": "Rhum coca ou cuba libre", "expected_keywords": ["rhum", "cuba", "cola", "citron", "libre"]}
+{"id": "id17", "type": "in-domain", "query": "Création originale avec du bourbon et miel", "expected_keywords": ["bourbon", "miel", "whisky", "whiskey", "sirop"]}
+{"id": "id18", "type": "in-domain", "query": "Cocktail crémeux et doux pour dessert", "expected_keywords": ["crème", "cream", "doux", "vanille", "liqueur"]}
+{"id": "id19", "type": "in-domain", "query": "Boisson pétillante et festive pour Noël", "expected_keywords": ["pétillant", "festif", "champagne", "prosecco", "bulles"]}
+{"id": "id20", "type": "in-domain", "query": "Cocktail vert à la menthe et concombre", "expected_keywords": ["menthe", "concombre", "vert", "gin", "frais"]}
+{"id": "id21", "type": "in-domain", "query": "Aperitif rosé et léger", "expected_keywords": ["rosé", "rose", "léger", "fruité", "aperitif"]}
+{"id": "id22", "type": "in-domain", "query": "Gin tonic classique avec aromates", "expected_keywords": ["gin", "tonic", "tonique", "aromate", "citron"]}
+{"id": "id23", "type": "in-domain", "query": "Long drink rafraîchissant pour l'été", "expected_keywords": ["long drink", "rafraîchissant", "frais", "citron", "vodka", "gin"]}
+{"id": "od01", "type": "out-domain", "query": "Comment réparer mon vélo ?", "expected_keywords": []}
+{"id": "od02", "type": "out-domain", "query": "Quelle est la capitale de la France ?", "expected_keywords": []}
+{"id": "od03", "type": "out-domain", "query": "Quel temps fait-il demain ?", "expected_keywords": []}
+{"id": "od04", "type": "out-domain", "query": "Raconte-moi une blague sur les programmeurs", "expected_keywords": []}
+{"id": "od05", "type": "out-domain", "query": "Je veux commander une pizza 4 fromages", "expected_keywords": []}
+{"id": "od06", "type": "out-domain", "query": "Quel est le meilleur smartphone du moment ?", "expected_keywords": []}
+{"id": "od07", "type": "out-domain", "query": "Aide-moi à faire mes devoirs de mathématiques", "expected_keywords": []}
+{"id": "od08", "type": "out-domain", "query": "Recette de tarte aux pommes maison", "expected_keywords": []}
+{"id": "od09", "type": "out-domain", "query": "Comment apprendre Python en 30 jours ?", "expected_keywords": []}
+{"id": "od10", "type": "out-domain", "query": "Donne-moi un conseil financier pour investir", "expected_keywords": []}
+{"id": "od11", "type": "out-domain", "query": "Quelle heure est-il à Tokyo ?", "expected_keywords": []}
+{"id": "od12", "type": "out-domain", "query": "Qui a gagné la Coupe du Monde 2022 ?", "expected_keywords": []}
+{"id": "od13", "type": "out-domain", "query": "Recommande-moi un film d'action", "expected_keywords": []}
+{"id": "od14", "type": "out-domain", "query": "Comment perdre du poids rapidement ?", "expected_keywords": []}
+{"id": "od15", "type": "out-domain", "query": "Quelles sont les nouvelles du jour en France ?", "expected_keywords": []}

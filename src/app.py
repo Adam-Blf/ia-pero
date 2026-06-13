@@ -740,49 +740,68 @@ def _precompute_cocktail_embeddings():
         return [], np.array([])
 
 
-def search_cocktails_sbert(query: str, top_k: int = 5, source_filter: str = "Tous") -> list:
+@st.cache_resource
+def _get_faiss_index():
     """
-    Search cocktails using SBERT semantic similarity (OPTIMIZED VERSION).
+    Build a FAISS IndexFlatIP from the precomputed cocktail embeddings.
 
-    This function performs fast semantic search across 600 cocktails by:
-    1. Loading precomputed embeddings from cache (instant)
-    2. Encoding only the user query (~20ms)
-    3. Computing cosine similarities (vectorized, ~10ms)
-    4. Returning top-k matches
+    Uses @st.cache_resource (not cache_data) so the FAISS index object is kept
+    alive across Streamlit reruns without serialization overhead.
 
-    PERFORMANCE OPTIMIZATION:
-    - OLD: Encoded all 600 cocktails on every search = ~2-3s per search
-    - NEW: Uses cached embeddings, only encodes query = ~50ms per search
-    - Speedup: 40-60x faster!
-
-    Args:
-        query (str): User's search query (e.g., "tropical refreshing cocktail")
-        top_k (int): Number of top results to return (default: 5)
+    Inner-product search on L2-normalized vectors is mathematically equivalent
+    to cosine similarity, so results and ordering are identical to the previous
+    numpy cosine implementation.
 
     Returns:
-        list[dict]: List of matching cocktails, each dict contains:
-            - name (str): Cocktail name
-            - description (str): Semantic description
-            - ingredients (str): Ingredients list
-            - similarity (float): Match score as percentage (0-100)
+        tuple: (faiss.IndexFlatIP | None, np.ndarray of shape (N, 384))
+            - index: FAISS index, or None if FAISS is unavailable
+            - normed_embeddings: L2-normalized float32 array (used as fallback)
+    """
+    descriptions, embeddings = _precompute_cocktail_embeddings()
+    if len(embeddings) == 0:
+        return None, np.array([])
 
-        Results are sorted by similarity (highest first) and filtered
-        to only include matches above 20% threshold.
+    try:
+        import faiss  # type: ignore[import]
 
-    Example:
-        >>> results = search_cocktails_sbert("fruity summer drink", top_k=3)
-        >>> print(results[0])
-        {
-            "name": "Tropical Paradise",
-            "description": "A refreshing blend of tropical fruits...",
-            "ingredients": "Rum, Pineapple juice, Coconut cream",
-            "similarity": 87.3
-        }
+        emb_f32 = embeddings.astype("float32")
+        # L2-normalize so inner product = cosine similarity
+        norms = np.linalg.norm(emb_f32, axis=1, keepdims=True)
+        norms = np.where(norms == 0, 1.0, norms)
+        normed = emb_f32 / norms
 
-    Performance:
-        - Average execution time: 50ms
-        - 95th percentile: 100ms
-        - Cache miss (first run): 2-3s
+        dim = normed.shape[1]
+        index = faiss.IndexFlatIP(dim)
+        index.add(normed)
+        logger.info("FAISS index built: %d vectors, dim=%d", index.ntotal, dim)
+        return index, normed
+
+    except ImportError:
+        logger.warning("faiss-cpu not installed, falling back to numpy cosine similarity")
+        return None, np.array([])
+
+
+def search_cocktails_sbert(query: str, top_k: int = 5, source_filter: str = "Tous") -> list:
+    """
+    Search cocktails using SBERT semantic similarity with FAISS Top-K retrieval.
+
+    Retrieval pipeline:
+    1. Load FAISS index (IndexFlatIP on L2-normalised embeddings) from cache
+    2. Encode user query and L2-normalise it
+    3. FAISS inner-product search → top_k results (cosine order, identical to
+       the previous numpy argsort implementation)
+    4. Filter on similarity threshold and optional source
+
+    Falls back to numpy cosine similarity if faiss-cpu is not installed.
+
+    Args:
+        query (str): User's search query
+        top_k (int): Number of top results to return (default: 5)
+        source_filter (str): "Tous" | "Generes par IA" | "Base Kaggle"
+
+    Returns:
+        list[dict]: Matching cocktails sorted by similarity descending,
+                    with keys: name, description, ingredients, similarity, source.
     """
     # Load the DataFrame for metadata lookup
     df = load_cocktails_csv()
@@ -794,37 +813,38 @@ def search_cocktails_sbert(query: str, top_k: int = 5, source_filter: str = "Tou
         from sentence_transformers import util
         import numpy as np
 
-        # Get model (cached via @lru_cache in backend.py)
         model = get_sbert_model()
-
-        # OPTIMIZATION: Load precomputed embeddings instead of recomputing
-        # This is the KEY performance improvement
         descriptions, desc_embeddings = _precompute_cocktail_embeddings()
+        faiss_index, normed_embeddings = _get_faiss_index()
 
         if len(desc_embeddings) == 0:
             logger.error("No precomputed embeddings available")
             return []
 
-        # Encode ONLY the user query (fast: ~20ms for a single sentence)
+        # Encode query
         query_embedding = model.encode(query, convert_to_numpy=True)
 
-        # Compute cosine similarity between query and ALL cocktails
-        # This is vectorized and very fast (~10ms for 600 embeddings)
-        similarities = util.cos_sim(query_embedding, desc_embeddings).numpy().flatten()
-
-        # Get indices of top-k most similar cocktails
-        # argsort returns indices that would sort the array
-        # [::-1] reverses to get descending order (highest similarity first)
-        top_indices = np.argsort(similarities)[::-1][:top_k]
+        # --- FAISS path (preferred) ---
+        if faiss_index is not None:
+            q_f32 = query_embedding.astype("float32")
+            q_norm = q_f32 / max(np.linalg.norm(q_f32), 1e-9)
+            scores, indices = faiss_index.search(q_norm.reshape(1, -1), top_k)
+            scored_pairs = [
+                (int(indices[0][i]), float(scores[0][i]))
+                for i in range(len(indices[0]))
+                if indices[0][i] >= 0
+            ]
+        else:
+            # --- numpy fallback (identical ordering semantics) ---
+            similarities_all = util.cos_sim(query_embedding, desc_embeddings).numpy().flatten()
+            top_indices = np.argsort(similarities_all)[::-1][:top_k]
+            scored_pairs = [(int(idx), float(similarities_all[idx])) for idx in top_indices]
 
         # Build results list with metadata from DataFrame
         results = []
-        for idx in top_indices:
-            similarity_score = float(similarities[idx])
-
+        for idx, similarity_score in scored_pairs:
             # Filter out weak matches (< 20% similarity)
             if similarity_score > 0.2:
-                # Apply source filter if specified
                 cocktail_source = df.iloc[idx].get("source", "generated")
                 if source_filter != "Tous":
                     if source_filter == "Generes par IA" and cocktail_source != "generated":
@@ -836,7 +856,7 @@ def search_cocktails_sbert(query: str, top_k: int = 5, source_filter: str = "Tou
                     "name": df.iloc[idx]["name"],
                     "description": df.iloc[idx]["description_semantique"],
                     "ingredients": df.iloc[idx].get("ingredients", ""),
-                    "similarity": round(similarity_score * 100, 1),  # Convert to percentage
+                    "similarity": round(similarity_score * 100, 1),
                     "source": cocktail_source,
                 })
 
@@ -1264,6 +1284,17 @@ def main():
 
     # Render header
     render_header()
+
+    # Degraded-mode banner: shown when GOOGLE_API_KEY is absent so the fallback
+    # is transparent to the user. Never prints the key value.
+    import os as _os
+    if not _os.getenv("GOOGLE_API_KEY"):
+        st.info(
+            "**Mode démo ·** génération en repli, sans appel Gemini. "
+            "Les recettes sont créées localement (plus génériques). "
+            "Ajoutez `GOOGLE_API_KEY` dans votre `.env` pour activer la génération IA complète.",
+            icon="ℹ️",
+        )
 
     # Control tabs: filters, SBERT search, session stats
     render_control_tabs()

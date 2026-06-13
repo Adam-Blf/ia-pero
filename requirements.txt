@@ -20,6 +20,9 @@ plotly>=5.18.0
 google-generativeai>=0.3.0
 python-dotenv>=1.0.0
 
+# Vector search
+faiss-cpu>=1.7.4
+
 # Testing
 pytest>=8.0.0
 pytest-playwright>=0.4.0

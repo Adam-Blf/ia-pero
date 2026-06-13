@@ -7,8 +7,21 @@ pour être compatible avec le format de l'application.
 Dataset Kaggle: https://www.kaggle.com/datasets/aadyasingh55/cocktails
 Colonnes attendues: id, name, alcoholic, category, glassType, instructions,
                     drinkThumbnail, ingredients, ingredientMeasures
+
+Accès aux données Kaggle :
+  Deux modes sont supportés :
+  1. API Kaggle (credentials dans ~/.kaggle/kaggle.json ou via les
+     variables d'environnement KAGGLE_USERNAME + KAGGLE_KEY).
+     → Lancer : python scripts/download_kaggle.py
+  2. Téléchargement manuel depuis https://www.kaggle.com/datasets/aadyasingh55/cocktails
+     → Placer le CSV dans data/kaggle_raw.csv puis lancer enrich_kaggle.py.
+
+  Sans credentials Kaggle, l'application fonctionne normalement avec les
+  600 cocktails générés (data/cocktails.csv). L'enrichissement Kaggle est
+  optionnel et ajoute ~1 600 cocktails supplémentaires.
 """
 
+import os
 import pandas as pd
 import json
 import re
@@ -18,6 +31,51 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+_KAGGLE_JSON = Path.home() / ".kaggle" / "kaggle.json"
+
+
+def has_kaggle_credentials() -> bool:
+    """
+    Check whether Kaggle credentials are available.
+
+    Two credential sources are checked in order:
+    1. Environment variables ``KAGGLE_USERNAME`` and ``KAGGLE_KEY``
+       (preferred in CI/CD pipelines and container environments).
+    2. The ``~/.kaggle/kaggle.json`` credentials file (standard Kaggle CLI setup).
+
+    Returns:
+        True if at least one credential source is detected.
+        Does NOT validate that the credentials are correct — only that they exist.
+
+    Examples::
+
+        if not has_kaggle_credentials():
+            print("Kaggle credentials not found - skipping enrichment.")
+        else:
+            from scripts.download_kaggle import download_with_kaggle_api
+            download_with_kaggle_api()
+    """
+    # Check environment variables first (CI/CD-friendly)
+    if os.getenv("KAGGLE_USERNAME") and os.getenv("KAGGLE_KEY"):
+        logger.info("Kaggle credentials found via environment variables.")
+        return True
+
+    # Fall back to ~/.kaggle/kaggle.json
+    if _KAGGLE_JSON.exists() and _KAGGLE_JSON.stat().st_size > 10:
+        logger.info("Kaggle credentials found at %s.", _KAGGLE_JSON)
+        return True
+
+    logger.info(
+        "No Kaggle credentials found. "
+        "To enable dataset enrichment, either:\n"
+        "  • Set KAGGLE_USERNAME + KAGGLE_KEY environment variables, or\n"
+        "  • Place your credentials in %s\n"
+        "  • Or download data/kaggle_raw.csv manually from "
+        "https://www.kaggle.com/datasets/aadyasingh55/cocktails",
+        _KAGGLE_JSON,
+    )
+    return False
 
 
 class KaggleDatasetParser:

@@ -130,6 +130,7 @@ tmp/
 temp/
 data/analytics.json
 data/recipe_cache.json
+data/recipe_cache.db
 
 # =============================================================================
 # JUPYTER NOTEBOOKS
@@ -209,3 +210,11 @@ ANNEXES_TECHNIQUES.md
 # =============================================================================
 data/kaggle_raw.csv
 data/kaggle_cocktails_enriched.csv
+
+# =============================================================================
+# GENERATED ARTIFACTS (eval runtime, FAISS indexes)
+# =============================================================================
+data/eval/*.jsonl.tmp
+reports/EVALUATION_*.md
+reports/EVAL_GENAI*.md
+*.faiss
