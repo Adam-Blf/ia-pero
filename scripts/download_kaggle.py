@@ -2,24 +2,32 @@
 Download Kaggle Cocktails Dataset
 
 Ce script télécharge le dataset Kaggle cocktails.
-Nécessite soit:
-1. L'API Kaggle configurée (kaggle.json dans ~/.kaggle/)
-2. OU téléchargement manuel depuis le navigateur
+Il est gaté derrière `has_kaggle_credentials()` pour ne jamais échouer
+silencieusement quand les credentials sont absents.
+
+Nécessite soit :
+1. Variables d'environnement KAGGLE_USERNAME + KAGGLE_KEY
+2. OU fichier ~/.kaggle/kaggle.json (Kaggle CLI standard)
+3. OU téléchargement manuel depuis le navigateur (fallback documenté)
 
 Dataset: https://www.kaggle.com/datasets/aadyasingh55/cocktails
 """
 
-import os
 import sys
 from pathlib import Path
-import subprocess
-import zipfile
+
+# Ajouter la racine du projet au path pour accéder à src/
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from src.kaggle_integration import has_kaggle_credentials  # noqa: E402
 
 
-def check_kaggle_api():
-    """Vérifie si l'API Kaggle est disponible."""
+def check_kaggle_api() -> bool:
+    """Vérifie si l'API Kaggle est disponible (credentials + package)."""
+    if not has_kaggle_credentials():
+        return False
     try:
-        import kaggle
+        import kaggle  # noqa: F401
         return True
     except ImportError:
         return False
