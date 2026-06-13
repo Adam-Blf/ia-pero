@@ -13,7 +13,7 @@ Ce module est le cerveau de l'application. Il fait deux choses principales:
 Workflow complet:
     User Query → Guardrail Check → Cache Lookup → Gemini API → Recipe
 
-Auteurs: Adam Beloucif & Amina Medjdoub
+Auteurs: Adam Beloucif & Émilien Morice
 Projet: RNCP Bloc 2 - Expert en Ingénierie de Données
 """
 from functools import lru_cache

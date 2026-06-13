@@ -772,7 +772,7 @@ def generate_pdf_recipe(recipe: dict) -> bytes:
 
 ════════════════════════════════════════════════════════════════
 
-                Cree par Adam Beloucif & Amina Medjdoub
+                Cree par Adam Beloucif & Émilien Morice
                  RNCP Bloc 2 - Expert en Ingenierie de Donnees
 
          L'abus d'alcool est dangereux pour la sante.
@@ -1254,7 +1254,7 @@ def render_footer():
     st.markdown("""
         <div class="art-deco-divider" style="margin-top: 3rem;">&#9670;</div>
         <p style="text-align: center; color: #D4AF37; font-size: 0.85rem; margin-bottom: 0.5rem;">
-            <strong>Cree par Adam Beloucif & Amina Medjdoub</strong>
+            <strong>Cree par Adam Beloucif & Émilien Morice</strong>
         </p>
         <p style="text-align: center; color: #A89968; font-size: 0.8rem;">
             <em>RNCP Bloc 2 - Expert en Ingenierie de Donnees</em>

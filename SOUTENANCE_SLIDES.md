@@ -1,7 +1,7 @@
 # SOUTENANCE - L'IA Pero
 ## Moteur de Recommandation de Cocktails par IA Semantique
 
-**Adam Beloucif & Amina Medjdoub**
+**Adam Beloucif & Émilien Morice**
 *Mastere Data Engineering et IA - EFREI Paris Pantheon-Assas Universite*
 *RNCP40875 - Bloc 2*
 *Tutrice : MALAEB Sarah*
@@ -61,7 +61,7 @@ Sprint 4 : Optimisations + Tests
 
 ## Repartition des Taches
 
-| Adam | Amina |
+| Adam | Émilien |
 |------|-------|
 | Backend RAG | Interface UI |
 | SBERT/Embeddings | Design Speakeasy |
@@ -284,6 +284,6 @@ if max(similarity) < 0.35:
 
 ---
 
-*Adam Beloucif & Amina Medjdoub*
+*Adam Beloucif & Émilien Morice*
 *Mastere Data Engineering et IA - EFREI Paris Pantheon-Assas Universite*
 *Tutrice : MALAEB Sarah*

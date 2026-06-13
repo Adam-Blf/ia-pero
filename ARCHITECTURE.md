@@ -209,5 +209,5 @@ pytest tests/test_guardrail.py -v
 
 ## Auteurs
 
-**Adam Beloucif & Amina Medjdoub**
+**Adam Beloucif & Émilien Morice**
 RNCP Bloc 2 - Expert en Ingenierie de Donnees
