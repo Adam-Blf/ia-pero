@@ -12,7 +12,7 @@ Colonnes attendues: id, name, alcoholic, category, glassType, instructions,
 import pandas as pd
 import json
 import re
-from typing import List, Tuple, Dict, Optional
+from typing import List, Tuple
 from pathlib import Path
 import logging
 
