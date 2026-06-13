@@ -4,14 +4,17 @@ L'IA Pero - Backend RAG & Guardrail
 
 Ce module est le cerveau de l'application. Il fait deux choses principales:
 
-1. **Guardrail Sémantique**: Vérifie que les demandes des utilisateurs
-   concernent bien les cocktails (et pas la météo ou les pizzas!)
+1. **Guardrail Sémantique (deux niveaux)**: Vérifie que les demandes des
+   utilisateurs concernent bien les cocktails (et pas la météo ou les pizzas!)
+   - Niveau 1 (rapide) : correspondance lexicale par mots-clés
+   - Niveau 2 (sémantique) : similarité cosinus SBERT ≥ 0.35
 
 2. **Génération de Recettes**: Crée des recettes personnalisées via l'API
-   Google Gemini, avec un système de cache intelligent pour économiser les coûts.
+   Google Gemini, avec un cache SQLite persistant qui survit aux redémarrages
+   et borne réellement les appels gratuits vers Gemini.
 
 Workflow complet:
-    User Query → Guardrail Check → Cache Lookup → Gemini API → Recipe
+    User Query → Guardrail Check (L1 keyword → L2 SBERT) → SQLite Cache → Gemini API → Recipe
 
 Auteurs: Adam Beloucif & Émilien Morice
 Projet: RNCP Bloc 2 - Expert en Ingénierie de Données
@@ -23,12 +26,12 @@ import json
 import logging
 import os
 import re
+import sqlite3
 
 import numpy as np
 from sentence_transformers import SentenceTransformer, util
 
 # Tentative de chargement des variables d'environnement (.env file)
-# Si python-dotenv n'est pas installé, on continue sans (pas critique)
 try:
     from dotenv import load_dotenv
     load_dotenv()
@@ -39,33 +42,30 @@ except ImportError:
 # CONFIGURATION
 # =============================================================================
 
-# Modèle SBERT pour calculer la similarité sémantique
-# all-MiniLM-L6-v2: Rapide, léger (384 dimensions), bon compromis qualité/vitesse
 MODEL_NAME = "all-MiniLM-L6-v2"
 
-# Mots-clés liés au domaine des cocktails
-# Utilisés par le guardrail pour détecter si une requête est pertinente
-# Plus on a de mots-clés, plus la détection est précise
+# Mots-clés domaine cocktails - utilisés par le guardrail niveau 1 (lexical)
 COCKTAIL_KEYWORDS = [
     "cocktail", "alcool", "boisson", "mojito", "whisky", "rhum", "vodka",
     "gin", "biere", "vin", "aperitif", "digestif", "bar", "barman", "shaker",
-    "martini", "margarita", "daiquiri", "negroni", "spritz", "punch", "tequila"
+    "martini", "margarita", "daiquiri", "negroni", "spritz", "punch", "tequila",
+    "beer", "wine", "drink", "spirit", "liqueur", "champagne", "prosecco",
+    "bourbon", "cognac", "brandy", "rum", "sake", "mezcal", "cider", "soda",
+    "mocktail", "sirop", "citron", "menthe", "glacon", "verre", "shaker",
 ]
 
-# Seuil de pertinence (cosine similarity)
-# 0.35 = le juste milieu entre trop permissif (0.20) et trop strict (0.50)
-# Calibré empiriquement sur 100+ requêtes réelles
+# Seuil de pertinence SBERT (niveau 2) - calibré empiriquement sur 100+ requêtes
 RELEVANCE_THRESHOLD = 0.35
 
-# Fichier de cache JSON pour stocker les recettes déjà générées
-# Permet d'éviter les appels API redondants (économie + rapidité)
-CACHE_FILE = Path("data/recipe_cache.json")
+# Cache SQLite persistant (survit aux redémarrages, borné par la taille du disque)
+SQLITE_CACHE_FILE = Path("data/recipe_cache.db")
 
-# Clé API Google Gemini (chargée depuis variable d'environnement)
-# Si absente, l'app fonctionne quand même en mode fallback
+# Clé API Google Gemini (chargée depuis .env / env var)
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
 
-# Configuration du logging (affiche les infos dans la console)
+# Indicateur public : True si la génération IA est disponible
+GEMINI_AVAILABLE: bool = bool(GOOGLE_API_KEY)
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -76,104 +76,147 @@ logger = logging.getLogger(__name__)
 @lru_cache(maxsize=1)
 def get_sbert_model() -> SentenceTransformer:
     """
-    Charge le modèle SBERT en mémoire (une seule fois).
-
-    Pourquoi le cache est important:
-    - Charger un modèle SBERT prend ~1-2 secondes et ~100 Mo de RAM
-    - Sans cache, on rechargerait le modèle à chaque requête → très lent!
-    - Avec @lru_cache, le modèle est chargé UNE FOIS puis réutilisé
-
-    Le décorateur @lru_cache(maxsize=1) garde en mémoire le résultat de
-    la première exécution. Les appels suivants retournent directement
-    le modèle sans le recharger.
+    Charge le modèle SBERT en mémoire (une seule fois, thread-safe via lru_cache).
 
     Returns:
-        SentenceTransformer: Modèle SBERT prêt à encoder du texte
-            - Modèle: all-MiniLM-L6-v2 (384 dimensions)
-            - Performance: ~50ms pour encoder une phrase
-            - Taille: ~91 Mo en mémoire
-
-    Performance:
-        - Premier appel: ~1-2s (téléchargement + chargement)
-        - Appels suivants: <1ms (récupération du cache)
-
-    Note technique:
-        Le cache Python functools.lru_cache est thread-safe, donc
-        compatible avec Streamlit qui peut avoir plusieurs threads.
+        SentenceTransformer: Modèle all-MiniLM-L6-v2 (384 dimensions)
     """
     return SentenceTransformer(MODEL_NAME)
 
 
 # =============================================================================
-# GUARDRAIL: RELEVANCE CHECK
+# SQLITE PERSISTENT CACHE
+# =============================================================================
+
+def _get_db_conn() -> sqlite3.Connection:
+    """Open SQLite connection and ensure the recipe_cache table exists."""
+    SQLITE_CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(str(SQLITE_CACHE_FILE))
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS recipe_cache ("
+        "  key      TEXT PRIMARY KEY,"
+        "  value    TEXT NOT NULL,"
+        "  created_at TEXT DEFAULT (datetime('now'))"
+        ")"
+    )
+    conn.commit()
+    return conn
+
+
+def _cache_get(key: str) -> dict | None:
+    """Return a cached recipe dict for *key*, or None on cache miss.
+
+    Args:
+        key: MD5 hex digest of the normalized query string.
+
+    Returns:
+        Parsed recipe dict, or None if not found / error.
+    """
+    try:
+        conn = _get_db_conn()
+        row = conn.execute(
+            "SELECT value FROM recipe_cache WHERE key = ?", (key,)
+        ).fetchone()
+        conn.close()
+        if row:
+            return json.loads(row[0])
+    except Exception as exc:
+        logger.warning("SQLite cache read error: %s", exc)
+    return None
+
+
+def _cache_set(key: str, value: dict) -> None:
+    """Store a recipe in the SQLite cache (upsert).
+
+    Args:
+        key: MD5 hex digest of the normalized query string.
+        value: Recipe dict to persist.
+    """
+    try:
+        serialized = json.dumps(value, ensure_ascii=False)
+        conn = _get_db_conn()
+        conn.execute(
+            "INSERT OR REPLACE INTO recipe_cache (key, value) VALUES (?, ?)",
+            (key, serialized),
+        )
+        conn.commit()
+        conn.close()
+    except Exception as exc:
+        logger.warning("SQLite cache write error: %s", exc)
+
+
+def _get_cache_key(query: str) -> str:
+    """Generate MD5 hash key for cache lookup (normalized input)."""
+    return hashlib.md5(query.lower().strip().encode()).hexdigest()
+
+
+def cache_size() -> int:
+    """Return the number of entries in the persistent recipe cache."""
+    try:
+        conn = _get_db_conn()
+        count = conn.execute("SELECT COUNT(*) FROM recipe_cache").fetchone()[0]
+        conn.close()
+        return count
+    except Exception:
+        return 0
+
+
+# =============================================================================
+# GUARDRAIL: TWO-LEVEL RELEVANCE CHECK
 # =============================================================================
 def check_relevance(text: str) -> dict:
     """
-    Vérifie si la demande de l'utilisateur concerne bien les cocktails.
+    Vérifie si la demande concerne les cocktails via un guardrail en deux niveaux.
 
-    C'est le "garde-fou" de l'application. Sans ça, on pourrait générer
-    n'importe quoi: des recettes de pizza, la météo, des blagues...
+    Niveau 1 - Lexical (rapide, ~0 ms):
+        Correspondance directe avec les mots-clés du domaine cocktails.
+        Si un mot-clé est trouvé → acceptation immédiate (évite les faux rejets
+        pour des requêtes courtes mais claires comme "rhum coca" ou "gin tonic").
 
-    Comment ça marche:
-    1. On encode la demande de l'utilisateur en vecteur (embedding SBERT)
-    2. On encode notre liste de mots-clés cocktails
-    3. On calcule la similarité cosinus entre la demande et chaque mot-clé
-    4. On prend la similarité maximale
-    5. Si c'est trop faible (< 0.35), on rejette la demande
-
-    Exemple concret:
-        - "mojito frais" → similarité 0.72 avec "mojito" → ✅ ACCEPTÉ
-        - "pizza 4 fromages" → similarité 0.15 max → ❌ REJETÉ
-        - "quelque chose de fruité" → similarité 0.41 → ✅ ACCEPTÉ (proche de "cocktail")
+    Niveau 2 - Sémantique SBERT (~50 ms):
+        Calcule la similarité cosinus entre la requête et les mots-clés encodés.
+        Si la similarité maximale est < 0.35 → rejet.
 
     Args:
-        text (str): Texte de l'utilisateur à vérifier
-            Ex: "Je veux un mojito", "Quelle heure est-il?"
+        text: Texte de l'utilisateur à vérifier.
 
     Returns:
-        dict: Résultat de la vérification
-            Si pertinent:
-                {"status": "ok", "similarity": 0.72}
-            Si hors-sujet:
-                {"status": "error", "message": "Desole, le barman..."}
-
-    Performance: ~50ms par requête (encoding + calcul de similarités)
-
-    Calibrage du seuil (0.35):
-        - Testé sur 100+ requêtes réelles
-        - Seuil 0.20: Trop permissif, accepte "pizza", "meteo"
-        - Seuil 0.35: ✅ Optimal, rejette hors-sujet, accepte variations
-        - Seuil 0.50: Trop strict, rejette "quelque chose de frais"
+        dict contenant :
+            - status   : "ok" ou "error"
+            - similarity: score cosinus max (float, niveau 2 seulement)
+            - reason   : "keyword_match" | "semantic_match" | "below_threshold"
+            - message  : message d'erreur (si status == "error")
     """
-    # Récupérer le modèle SBERT (chargé depuis le cache, donc rapide)
-    model = get_sbert_model()
+    text_lower = text.lower()
 
-    # Étape 1: Encoder le texte de l'utilisateur en vecteur 384D
-    # "mojito frais" → [0.23, -0.45, 0.12, ..., 0.67]
-    text_embedding = model.encode(text, convert_to_numpy=True)
-
-    # Étape 2: Encoder tous les mots-clés cocktails
-    # On obtient une matrice: [23 mots-clés × 384 dimensions]
-    keywords_embeddings = model.encode(COCKTAIL_KEYWORDS, convert_to_numpy=True)
-
-    # Étape 3: Calculer la similarité cosinus entre le texte et chaque mot-clé
-    # Résultat: un tableau de 23 valeurs entre -1 et 1
-    # Plus la valeur est proche de 1, plus c'est similaire
-    similarities = util.cos_sim(text_embedding, keywords_embeddings).numpy().flatten()
-
-    # Étape 4: Prendre la meilleure similarité (= mot-clé le plus proche)
-    max_similarity = float(np.max(similarities))
-
-    # Étape 5: Décision selon le seuil
-    if max_similarity < RELEVANCE_THRESHOLD:
-        # La demande est trop éloignée du domaine cocktails → REJET
+    # ---- Niveau 1 : correspondance lexicale (coût nul) ----
+    if any(kw in text_lower for kw in COCKTAIL_KEYWORDS):
         return {
-            "status": "error",
-            "message": "Desole, le barman ne comprend que les commandes de boissons !"
+            "status": "ok",
+            "similarity": 1.0,
+            "reason": "keyword_match",
         }
 
-    # La demande est suffisamment proche → ACCEPTATION
-    return {"status": "ok", "similarity": max_similarity}
+    # ---- Niveau 2 : similarité sémantique SBERT ----
+    model = get_sbert_model()
+    text_embedding = model.encode(text, convert_to_numpy=True)
+    keywords_embeddings = model.encode(COCKTAIL_KEYWORDS, convert_to_numpy=True)
+    similarities = util.cos_sim(text_embedding, keywords_embeddings).numpy().flatten()
+    max_similarity = float(np.max(similarities))
+
+    if max_similarity < RELEVANCE_THRESHOLD:
+        return {
+            "status": "error",
+            "message": "Desole, le barman ne comprend que les commandes de boissons !",
+            "reason": "below_threshold",
+            "similarity": max_similarity,
+        }
+
+    return {
+        "status": "ok",
+        "similarity": max_similarity,
+        "reason": "semantic_match",
+    }
 
 
 # =============================================================================
@@ -223,21 +266,18 @@ def _call_gemini_api(query: str) -> dict | None:
 
         genai.configure(api_key=GOOGLE_API_KEY)
 
-        # Models ordered by preference (fastest/cheapest first)
-        # Based on Google AI Studio free tier limits
         model_names = [
-            "gemini-2.5-flash-lite",  # 10 RPM, 20 RPD
-            "gemini-2.5-flash",        # 5 RPM, 20 RPD
-            "gemini-3-flash",          # 5 RPM, 20 RPD
-            "gemini-1.5-flash-latest", # Fallback
-            "gemini-pro",              # Legacy fallback
+            "gemini-2.5-flash-lite",
+            "gemini-2.5-flash",
+            "gemini-3-flash",
+            "gemini-1.5-flash-latest",
+            "gemini-pro",
         ]
 
         prompt = SPEAKEASY_PROMPT.format(query=query)
         response = None
         last_error = None
 
-        # Try each model until one succeeds
         for model_name in model_names:
             try:
                 logger.info(f"Trying model: {model_name}")
@@ -255,16 +295,13 @@ def _call_gemini_api(query: str) -> dict | None:
                 error_str = str(e)
                 last_error = e
 
-                # Check for rate limit (429) or quota exceeded
                 if "429" in error_str or "quota" in error_str.lower() or "rate" in error_str.lower():
                     logger.warning(f"Rate limit on {model_name}, switching to next model...")
                     continue
-                # Check for model not found (404)
                 elif "404" in error_str or "not found" in error_str.lower():
                     logger.warning(f"Model {model_name} not available, trying next...")
                     continue
                 else:
-                    # Other error, still try next model
                     logger.warning(f"Error with {model_name}: {e}, trying next...")
                     continue
 
@@ -275,27 +312,23 @@ def _call_gemini_api(query: str) -> dict | None:
                 logger.error("All models returned empty responses")
             return None
 
-        # Extract JSON from response (handle markdown code blocks)
         response_text = response.text.strip()
         if response_text.startswith("```"):
-            # Remove markdown code block markers
             response_text = re.sub(r"^```(?:json)?\s*", "", response_text)
             response_text = re.sub(r"\s*```$", "", response_text)
 
         recipe_data = json.loads(response_text)
 
-        # Validate required fields
         required_fields = ["name", "ingredients", "instructions", "taste_profile"]
         if not all(field in recipe_data for field in required_fields):
-            logger.error(f"Missing required fields in Gemini response")
+            logger.error("Missing required fields in Gemini response")
             return None
 
-        # Ensure taste_profile has all required dimensions
         taste_required = ["Douceur", "Acidite", "Amertume", "Force", "Fraicheur", "Prix", "Qualite"]
         taste_profile = recipe_data.get("taste_profile", {})
         for dim in taste_required:
             if dim not in taste_profile:
-                taste_profile[dim] = 3.0  # Default value
+                taste_profile[dim] = 3.0
 
         recipe_data["taste_profile"] = taste_profile
         recipe_data["query"] = query
@@ -317,8 +350,6 @@ def _generate_fallback_recipe(query: str) -> dict:
     """
     Generate a fallback recipe when Gemini API is unavailable.
 
-    Creates a basic cocktail suggestion based on keywords in the query.
-
     Args:
         query: User's cocktail request
 
@@ -327,7 +358,6 @@ def _generate_fallback_recipe(query: str) -> dict:
     """
     query_lower = query.lower()
 
-    # Detect flavor preferences
     if any(w in query_lower for w in ["frais", "fresh", "rafraichissant", "ete"]):
         base_spirit = "Vodka"
         profile = {"Douceur": 3.0, "Acidite": 3.5, "Amertume": 1.5, "Force": 3.0, "Fraicheur": 4.5, "Prix": 2.5, "Qualite": 3.5}
@@ -345,7 +375,7 @@ def _generate_fallback_recipe(query: str) -> dict:
         profile = {"Douceur": 3.0, "Acidite": 3.0, "Amertume": 2.5, "Force": 3.5, "Fraicheur": 3.5, "Prix": 3.0, "Qualite": 3.5}
 
     return {
-        "name": f"Le Secret du Speakeasy",
+        "name": "Le Secret du Speakeasy",
         "ingredients": [
             f"50ml {base_spirit}",
             "25ml Jus de citron frais",
@@ -359,33 +389,6 @@ def _generate_fallback_recipe(query: str) -> dict:
 
 
 # =============================================================================
-# RECIPE CACHE MANAGEMENT
-# =============================================================================
-def _get_cache_key(query: str) -> str:
-    """Generate MD5 hash key for cache lookup."""
-    return hashlib.md5(query.lower().strip().encode()).hexdigest()
-
-
-def _load_cache() -> dict:
-    """Load recipe cache from JSON file."""
-    if CACHE_FILE.exists():
-        try:
-            with open(CACHE_FILE, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except (json.JSONDecodeError, IOError):
-            logger.warning("Cache file corrupted, starting fresh")
-            return {}
-    return {}
-
-
-def _save_cache(cache: dict) -> None:
-    """Save recipe cache to JSON file."""
-    CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
-    with open(CACHE_FILE, "w", encoding="utf-8") as f:
-        json.dump(cache, f, ensure_ascii=False, indent=2)
-
-
-# =============================================================================
 # MAIN RECIPE GENERATION
 # =============================================================================
 def generate_recipe(query: str) -> dict:
@@ -393,35 +396,34 @@ def generate_recipe(query: str) -> dict:
     Generate or retrieve a cocktail recipe.
 
     Pipeline:
-    1. Validate query using semantic guardrail
-    2. Check JSON cache for existing recipe (cost optimization)
+    1. Validate query using the two-level semantic guardrail
+    2. Check persistent SQLite cache (cost optimization)
     3. Call Gemini API for new generation
-    4. Fallback to basic recipe if API unavailable
-    5. Cache result for future requests
+    4. Fallback to local recipe if API unavailable
+    5. Persist result in SQLite cache
 
     Args:
         query: User query for cocktail recipe
 
     Returns:
-        dict with recipe information:
+        dict:
         - {"status": "ok", "recipe": {...}, "cached": bool} on success
-        - {"status": "error", "message": "..."} if off-topic
+        - {"status": "error", "message": "...", "reason": str} if off-topic
     """
-    # Step 1: Guardrail - Check relevance
+    # Step 1: Two-level guardrail
     relevance = check_relevance(query)
     if relevance["status"] == "error":
         return relevance
 
-    # Step 2: Check cache (cost optimization - avoids redundant API calls)
+    # Step 2: SQLite persistent cache lookup
     cache_key = _get_cache_key(query)
-    cache = _load_cache()
-
-    if cache_key in cache:
-        logger.info(f"Cache hit for query: {query[:50]}...")
-        return {"status": "ok", "recipe": cache[cache_key], "cached": True}
+    cached_recipe = _cache_get(cache_key)
+    if cached_recipe is not None:
+        logger.info("Cache hit for query: %s...", query[:50])
+        return {"status": "ok", "recipe": cached_recipe, "cached": True}
 
     # Step 3: Generate with Gemini API
-    logger.info(f"Generating new recipe for: {query[:50]}...")
+    logger.info("Generating new recipe for: %s...", query[:50])
     recipe = _call_gemini_api(query)
 
     # Step 4: Fallback if API fails
@@ -429,8 +431,7 @@ def generate_recipe(query: str) -> dict:
         logger.info("Using fallback recipe generation")
         recipe = _generate_fallback_recipe(query)
 
-    # Step 5: Cache the result
-    cache[cache_key] = recipe
-    _save_cache(cache)
+    # Step 5: Persist in SQLite cache
+    _cache_set(cache_key, recipe)
 
     return {"status": "ok", "recipe": recipe, "cached": False}
