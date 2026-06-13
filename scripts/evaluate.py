@@ -30,6 +30,10 @@ import time
 from pathlib import Path
 from typing import Any
 
+# Force UTF-8 stdout on Windows so that ✓/✗ symbols render correctly
+if sys.platform == "win32" and hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # type: ignore[union-attr]
+
 import numpy as np
 import pandas as pd
 
@@ -47,6 +51,7 @@ from src.backend import check_relevance, get_sbert_model  # noqa: E402
 EVAL_FILE = ROOT / "data" / "eval" / "queries.jsonl"
 COCKTAILS_CSV = ROOT / "data" / "cocktails.csv"
 REPORT_FILE = ROOT / "reports" / "EVALUATION.md"
+BASELINE_FILE = ROOT / "reports" / "EVALUATION_baseline.json"
 TOP_K = 5
 
 
@@ -236,8 +241,8 @@ def evaluate(quiet: bool = False) -> dict[str, Any]:
     return results
 
 
-def _write_report(results: dict[str, Any]) -> None:
-    """Write EVALUATION.md to reports/."""
+def _write_report(results: dict[str, Any], baseline: dict[str, Any] | None = None) -> None:
+    """Write EVALUATION.md to reports/, with optional before/after comparison."""
     REPORT_FILE.parent.mkdir(parents=True, exist_ok=True)
 
     in_lines = [d for d in results["details"] if d["type"] == "in-domain"]
@@ -253,6 +258,22 @@ def _write_report(results: dict[str, Any]) -> None:
         f"| hit@5 (in-domain) | **{results['hit_at_5']:.1%}** ({results['in_domain_hits']}/{results['in_domain_total']}) |",
         f"| correct-refusal rate (out-of-domain) | **{results['refusal_rate']:.1%}** ({results['out_domain_correct_refusals']}/{results['out_domain_total']}) |",
         "",
+    ]
+
+    if baseline is not None:
+        lines += [
+            "## Before / After · guardrail improvement",
+            "",
+            "| Metric | Before | After | Delta |",
+            "|--------|--------|-------|-------|",
+            f"| hit@5 | {baseline['hit_at_5']:.1%} | {results['hit_at_5']:.1%} "
+            f"| {results['hit_at_5'] - baseline['hit_at_5']:+.1%} |",
+            f"| correct-refusal rate | {baseline['refusal_rate']:.1%} | {results['refusal_rate']:.1%} "
+            f"| {results['refusal_rate'] - baseline['refusal_rate']:+.1%} |",
+            "",
+        ]
+
+    lines += [
         "## Definitions",
         "",
         "- **hit@5**: for each in-domain query the top-5 SBERT results are checked "
@@ -300,12 +321,31 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="L'IA Pero offline evaluation")
     parser.add_argument("--quiet", action="store_true", help="Print summary only")
     parser.add_argument("--no-report", action="store_true", help="Skip writing EVALUATION.md")
+    parser.add_argument(
+        "--save-baseline",
+        action="store_true",
+        help="Save current results as baseline for before/after comparison",
+    )
     args = parser.parse_args()
 
     results = evaluate(quiet=args.quiet)
 
+    # Load existing baseline for comparison (if available)
+    baseline: dict[str, Any] | None = None
+    if BASELINE_FILE.exists():
+        try:
+            baseline = json.loads(BASELINE_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            baseline = None
+
+    if args.save_baseline:
+        BASELINE_FILE.parent.mkdir(parents=True, exist_ok=True)
+        slim = {k: v for k, v in results.items() if k != "details"}
+        BASELINE_FILE.write_text(json.dumps(slim, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"Baseline saved to {BASELINE_FILE}")
+
     if not args.no_report:
-        _write_report(results)
+        _write_report(results, baseline=baseline)
 
     # Exit with non-zero if hit@5 < 50% or refusal rate < 80% (CI gate)
     ok = results["hit_at_5"] >= 0.50 and results["refusal_rate"] >= 0.80

@@ -1,0 +1,8 @@
+{
+  "hit_at_5": 0.9130434782608695,
+  "in_domain_total": 23,
+  "in_domain_hits": 21,
+  "refusal_rate": 0.8666666666666667,
+  "out_domain_total": 15,
+  "out_domain_correct_refusals": 13
+}

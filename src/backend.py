@@ -54,8 +54,52 @@ COCKTAIL_KEYWORDS = [
     "mocktail", "sirop", "citron", "menthe", "glacon", "verre", "shaker",
 ]
 
+# Mots-clés de secours (niveau 1.5) - vocabulaire adjacent cocktails.
+# Activés quand la similarité SBERT est dans la "zone grise" [0.20, 0.35[.
+# Permet d'accepter des requêtes créatives sans mots-clés cocktail explicites
+# mais avec un contexte de dégustation ou de bar clairement présent.
+RESCUE_KEYWORDS = [
+    "frais", "rafraichissant", "rafraîchissant", "fruité", "fruite",
+    "doux", "fort", "leger", "léger", "petillant", "pétillant", "bulles",
+    "soiree", "soirée", "fete", "fête", "apero", "apéro",
+    "melanger", "mélanger", "servir", "garnir", "glaçon",
+    "digestif", "long drink", "mixologie", "mixology",
+    "creation", "création", "barman", "palette", "saveur",
+    "rosé", "rose", "aromatique", "herbe", "epice", "épice",
+]
+
+# Filtre négatif (niveau 2b) - domaines clairement hors cocktails.
+# Si un terme de cette liste est détecté dans la requête ET que la similarité
+# SBERT reste < STRICT_THRESHOLD, la requête est rejetée même si elle dépasse
+# RELEVANCE_THRESHOLD. Réduit les faux positifs du guardrail sémantique.
+OUT_OF_DOMAIN_KEYWORDS = [
+    # Transport / mécanique
+    "velo", "vélo", "voiture", "bagnole", "moto", "pneu", "moteur", "garage",
+    "reparer", "réparer", "mecanique", "mécanique",
+    # Cuisine hors boissons
+    "pizza", "burger", "sandwich", "tarte", "gateau", "gâteau", "cupcake",
+    "recette de", "recette d", "cuisine",  # "recette cocktail" → pas bloqué
+    # Technologie / électronique
+    "smartphone", "telephone", "téléphone", "ordinateur", "laptop",
+    "internet", "wifi", "réseau", "reseau", "logiciel",
+    # Scolaire / académique
+    "devoirs", "mathematiques", "mathématiques", "exercice scolaire",
+    "apprendre python", "tutoriel", "formation",
+    # Santé / régime
+    "perdre du poids", "regime", "régime", "calorie", "sport",
+    # Divertissement non-bar
+    "film", "cinema", "cinéma", "netflix", "serie", "série",
+    # Finance
+    "investir", "bourse", "actions", "dividende", "placement financier",
+    # Météo / actualité
+    "meteo", "météo", "temperature ambiante", "actualite", "actualité",
+]
+
 # Seuil de pertinence SBERT (niveau 2) - calibré empiriquement sur 100+ requêtes
 RELEVANCE_THRESHOLD = 0.35
+
+# Seuil strict pour les requêtes contenant un terme hors-domaine (niveau 2b)
+STRICT_THRESHOLD = 0.50
 
 # Cache SQLite persistant (survit aux redémarrages, borné par la taille du disque)
 SQLITE_CACHE_FILE = Path("data/recipe_cache.db")
@@ -166,30 +210,50 @@ def cache_size() -> int:
 # =============================================================================
 def check_relevance(text: str) -> dict:
     """
-    Vérifie si la demande concerne les cocktails via un guardrail en deux niveaux.
+    Vérifie si la demande concerne les cocktails via un guardrail en trois niveaux.
 
-    Niveau 1 - Lexical (rapide, ~0 ms):
+    Niveau 1 - Lexical strict (rapide, ~0 ms):
         Correspondance directe avec les mots-clés du domaine cocktails.
         Si un mot-clé est trouvé → acceptation immédiate (évite les faux rejets
         pour des requêtes courtes mais claires comme "rhum coca" ou "gin tonic").
+        Raison retournée : "keyword_match"
 
     Niveau 2 - Sémantique SBERT (~50 ms):
         Calcule la similarité cosinus entre la requête et les mots-clés encodés.
-        Si la similarité maximale est < 0.35 → rejet.
+
+        2a - Zone grise [0.20, 0.35[ : check de secours lexical.
+             Si un mot de RESCUE_KEYWORDS est présent → acceptation conditionnelle.
+             Réduit les faux rejets pour des requêtes créatives sans mot-clé
+             cocktail explicite (ex. "quelque chose de fruité pour l'été").
+             Raison retournée : "rescue_keyword_match"
+
+        2b - Score ≥ 0.35 ET terme hors-domaine détecté (OUT_OF_DOMAIN_KEYWORDS) :
+             Applique un seuil strict (0.50) pour filtrer les faux positifs.
+             Réduit les acceptations erronées de requêtes alimentaires/tech
+             (ex. "commander une pizza", "réparer mon vélo").
+             Raison retournée : "out_of_domain_filtered"
+
+        Score ≥ 0.35 sans terme hors-domaine → acceptation.
+        Raison retournée : "semantic_match"
+
+        Score < 0.20 (ou 0.35 sans secours) → rejet.
+        Raison retournée : "below_threshold"
 
     Args:
         text: Texte de l'utilisateur à vérifier.
 
     Returns:
         dict contenant :
-            - status   : "ok" ou "error"
-            - similarity: score cosinus max (float, niveau 2 seulement)
-            - reason   : "keyword_match" | "semantic_match" | "below_threshold"
-            - message  : message d'erreur (si status == "error")
+            - status    : "ok" ou "error"
+            - similarity: score cosinus max (float)
+            - reason    : "keyword_match" | "rescue_keyword_match" |
+                          "semantic_match" | "below_threshold" |
+                          "out_of_domain_filtered"
+            - message   : message d'erreur lisible (si status == "error")
     """
     text_lower = text.lower()
 
-    # ---- Niveau 1 : correspondance lexicale (coût nul) ----
+    # ---- Niveau 1 : correspondance lexicale stricte (coût nul) ----
     if any(kw in text_lower for kw in COCKTAIL_KEYWORDS):
         return {
             "status": "ok",
@@ -204,13 +268,38 @@ def check_relevance(text: str) -> dict:
     similarities = util.cos_sim(text_embedding, keywords_embeddings).numpy().flatten()
     max_similarity = float(np.max(similarities))
 
+    # ---- Niveau 2a : zone grise — check de secours lexical ----
     if max_similarity < RELEVANCE_THRESHOLD:
+        if max_similarity >= 0.20 and any(kw in text_lower for kw in RESCUE_KEYWORDS):
+            logger.info(
+                "Guardrail L2a rescue: query accepted via rescue keyword "
+                "(similarity=%.3f)", max_similarity
+            )
+            return {
+                "status": "ok",
+                "similarity": max_similarity,
+                "reason": "rescue_keyword_match",
+            }
         return {
             "status": "error",
-            "message": "Desole, le barman ne comprend que les commandes de boissons !",
+            "message": "Désolé, le barman ne comprend que les commandes de boissons !",
             "reason": "below_threshold",
             "similarity": max_similarity,
         }
+
+    # ---- Niveau 2b : filtre hors-domaine (score ≥ RELEVANCE_THRESHOLD) ----
+    if any(kw in text_lower for kw in OUT_OF_DOMAIN_KEYWORDS):
+        if max_similarity < STRICT_THRESHOLD:
+            logger.info(
+                "Guardrail L2b: out-of-domain term detected, applying strict "
+                "threshold (similarity=%.3f < %.2f)", max_similarity, STRICT_THRESHOLD
+            )
+            return {
+                "status": "error",
+                "message": "Désolé, le barman ne comprend que les commandes de boissons !",
+                "reason": "out_of_domain_filtered",
+                "similarity": max_similarity,
+            }
 
     return {
         "status": "ok",
