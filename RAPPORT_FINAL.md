@@ -23,7 +23,7 @@
 ---
 
 **Auteurs :**
-**Adam Beloucif & Amina Medjdoub**
+**Adam Beloucif & Émilien Morice**
 
 **Promotion :** Mastere Data Engineering et Intelligence Artificielle
 
@@ -339,7 +339,7 @@ Jalon        │  J1  │  J2  │  J3  │  J4  │
 
 ## 4.4 Organisation du Binome
 
-| Domaine | Adam Beloucif | Amina Medjdoub |
+| Domaine | Adam Beloucif | Émilien Morice |
 |---------|---------------|----------------|
 | **Architecture** | Lead | Support |
 | **Backend NLP** | Lead | Support |
@@ -881,7 +881,7 @@ def _save_cache(key: str, recipe: dict):
 │  └─────────────────────────────────────────────────────┘   │
 │                                                             │
 │  ─────────────────────────────────────────────────────────  │
-│  Adam Beloucif & Amina Medjdoub | RNCP Bloc 2 | 2026       │
+│  Adam Beloucif & Émilien Morice | RNCP Bloc 2 | 2026       │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -1078,7 +1078,7 @@ Ce projet illustre la capacite a **concevoir**, **implementer** et **optimiser**
 
 <div align="center">
 
-**Adam Beloucif & Amina Medjdoub**
+**Adam Beloucif & Émilien Morice**
 
 *Mastere Data Engineering et Intelligence Artificielle*
 
@@ -1198,7 +1198,7 @@ name,description_semantique,ingredients,instructions,category,difficulty,prep_ti
 
 *Document genere le 2 Fevrier 2026*
 *L'IA Pero - Projet IA Generative*
-*Adam Beloucif & Amina Medjdoub*
+*Adam Beloucif & Émilien Morice*
 *EFREI Paris Pantheon-Assas Universite*
 
 </div>

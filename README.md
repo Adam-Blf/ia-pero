@@ -15,7 +15,7 @@
 
 Application de recommandation de cocktails utilisant **NLP semantique (SBERT)** et **generation GenAI (Google Gemini)**.
 
-**Auteurs** : Adam Beloucif & Amina Medjdoub
+**Auteurs** : Adam Beloucif & Émilien Morice
 **Tutrice** : MALAEB Sarah
 **Formation** : EFREI Paris - Mastere Data Engineering et IA
 
