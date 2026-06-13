@@ -7,11 +7,9 @@ import sys
 import re
 import time
 import json
-import base64
 import logging
 from pathlib import Path
 from datetime import datetime
-from io import BytesIO
 
 # Add project root to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -19,9 +17,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import streamlit as st
 import plotly.graph_objects as go
 import pandas as pd
+import numpy as np
 import random
 
-from src.backend import generate_recipe, check_relevance, get_sbert_model
+from src.backend import generate_recipe, get_sbert_model
 
 # Setup logging for analytics
 logging.basicConfig(level=logging.INFO)
@@ -787,7 +786,7 @@ def generate_pdf_recipe(recipe: dict) -> bytes:
 # =============================================================================
 def inject_speakeasy_css():
     """Inject custom CSS for Speakeasy theme."""
-    st.markdown(SPEAKEASY_CSS, unsafe_allow_html=True)
+    st.markdown(EFREI_CSS, unsafe_allow_html=True)
 
 
 # =============================================================================
