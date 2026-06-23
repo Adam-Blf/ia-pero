@@ -198,6 +198,7 @@ yarn-error.log*
 # =============================================================================
 *.pdf
 !assets/*.pdf
+!RAPPORT_FINAL.pdf
 
 # Old/intermediate report versions
 RAPPORT_30_PAGES.md
