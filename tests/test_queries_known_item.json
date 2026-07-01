@@ -1,0 +1,182 @@
+[
+  {
+    "query": "Un cocktail convivial a base de Brandy, melange avec Jus de raisin et rehausse de Malibu. Equilibre ",
+    "relevant_names": [
+      "Sydney Tropical"
+    ]
+  },
+  {
+    "query": "Harmonie elegant entre Cognac vigoureux et Cola delicat. Blue Curacao ajoute la note parfaite. Notes",
+    "relevant_names": [
+      "Hong Kong Smoky"
+    ]
+  },
+  {
+    "query": "Ce cocktail aperitif met en valeur le Whisky scotch accompagne de Lait de coco frais. Malibu apporte",
+    "relevant_names": [
+      "Singapore Nordic"
+    ]
+  },
+  {
+    "query": "Harmonie convivial entre Rhum blanc vigoureux et Lait de coco delicat. Sirop de grenadine ajoute une",
+    "relevant_names": [
+      "Soul de Jamaica"
+    ]
+  },
+  {
+    "query": "Cocktail strong subtil celebrant Gin dans toute sa splendeur. Ginger ale et Kahlua completent l'ense",
+    "relevant_names": [
+      "Havana Sour"
+    ]
+  },
+  {
+    "query": "Ce digestif harmonieux combine harmonieusement Vodka et Jus d'ananas, avec une touche de Cointreau. ",
+    "relevant_names": [
+      "Smoky Journey"
+    ]
+  },
+  {
+    "query": "Ce cocktail intense revisite les classiques avec Mezcal, Nectar de peche et Cointreau. Sensation cha",
+    "relevant_names": [
+      "Thunder de Bermuda"
+    ]
+  },
+  {
+    "query": "Un melange audacieux et equilibre de Cognac avec Jus de mangue. Le Creme de menthe ajoute une dimens",
+    "relevant_names": [
+      "Shanghai Fizz"
+    ]
+  },
+  {
+    "query": "Un audacieux voyage sensoriel avec Pisco comme guide, Puree de fraise comme compagnon et Blue Curaca",
+    "relevant_names": [
+      "Melbourne Silky"
+    ]
+  },
+  {
+    "query": "Creation intense associant Mezcal et Jus de tomate avec elegance. Midori complete ce tableau gustati",
+    "relevant_names": [
+      "Secret Elixir"
+    ]
+  },
+  {
+    "query": "Creation harmonieux associant Gin et Jus de grenade avec elegance. Sirop de grenadine complete ce ta",
+    "relevant_names": [
+      "Acapulco Royal"
+    ]
+  },
+  {
+    "query": "Un melange rafraichissant et intense de Whisky bourbon avec Jus de tomate. Le Miel liquide ajoute un",
+    "relevant_names": [
+      "Classic Fog"
+    ]
+  },
+  {
+    "query": "Le caractere du Vodka s'exprime pleinement avec Lait de coco et Blue Curacao dans ce cocktail modern",
+    "relevant_names": [
+      "Dublin Fizz"
+    ]
+  },
+  {
+    "query": "Ce cocktail intense revisite les classiques avec Gin, Nectar de peche et Aperol. Equilibre parfait e",
+    "relevant_names": [
+      "Vintage Soul"
+    ]
+  },
+  {
+    "query": "Ce tropical intense combine harmonieusement Rhum brun et Puree de framboise, avec une touche de Kahl",
+    "relevant_names": [
+      "Garden de Melbourne"
+    ]
+  },
+  {
+    "query": "Ce cocktail harmonieux revisite les classiques avec Rhum brun, Jus de cranberry et Blue Curacao. Sen",
+    "relevant_names": [
+      "Silver Mind"
+    ]
+  },
+  {
+    "query": "Ce cocktail intense revisite les classiques avec Whisky irlandais, Nectar de peche et Malibu. Bouque",
+    "relevant_names": [
+      "Malibu Classic"
+    ]
+  },
+  {
+    "query": "Ce cocktail complexe revisite les classiques avec Rhum blanc, Jus de citron jaune et Malibu. Sensati",
+    "relevant_names": [
+      "Brazilian Vine"
+    ]
+  },
+  {
+    "query": "Un cocktail sophistique a base de Gin, melange avec Soda et rehausse de Midori. Bouquet de herbes ev",
+    "relevant_names": [
+      "Rio Frozen"
+    ]
+  },
+  {
+    "query": "Ce cocktail classic met en valeur le Brandy accompagne de Jus de citron jaune frais. Campari apporte",
+    "relevant_names": [
+      "Paris Elegant"
+    ]
+  },
+  {
+    "query": "Un cocktail elegant a base de Rhum brun, melange avec Jus de pamplemousse et rehausse de Miel liquid",
+    "relevant_names": [
+      "Acapulco Punch"
+    ]
+  },
+  {
+    "query": "Decouvrez ce cocktail elegant ou le Whisky bourbon rencontre le Jus d'orange dans une danse de saveu",
+    "relevant_names": [
+      "Electric Storm"
+    ]
+  },
+  {
+    "query": "Ce classic equilibre combine harmonieusement Vodka et Puree de framboise, avec une touche de Midori.",
+    "relevant_names": [
+      "The Tropical Legend"
+    ]
+  },
+  {
+    "query": "Ce strong delicat combine harmonieusement Tequila reposado et Eau de rose, avec une touche de Sirop ",
+    "relevant_names": [
+      "The Dark Storm"
+    ]
+  },
+  {
+    "query": "Creation harmonieux associant Rhum ambre et Nectar de litchi avec elegance. Amaretto complete ce tab",
+    "relevant_names": [
+      "Cape Town Cooler"
+    ]
+  },
+  {
+    "query": "Ce cocktail harmonieux revisite les classiques avec Cognac, Eau gazeuse et Malibu. Profil gustatif m",
+    "relevant_names": [
+      "Capri Smash"
+    ]
+  },
+  {
+    "query": "Cocktail classic harmonieux celebrant Whisky bourbon dans toute sa splendeur. Nectar de peche et Ben",
+    "relevant_names": [
+      "Italian Vine"
+    ]
+  },
+  {
+    "query": "Decouvrez ce cocktail convivial ou le Rhum ambre rencontre le Jus de mangue dans une danse de saveur",
+    "relevant_names": [
+      "The Elegant Dream"
+    ]
+  },
+  {
+    "query": "Decouvrez ce cocktail exotique ou le Rhum ambre rencontre le Jus de grenade dans une danse de saveur",
+    "relevant_names": [
+      "Marrakech Smash"
+    ]
+  },
+  {
+    "query": "Laissez-vous seduire par ce audacieux cocktail ou Rhum ambre s'allie au Soda. Une pointe de Creme de",
+    "relevant_names": [
+      "The Mystic Dawn"
+    ]
+  }
+]

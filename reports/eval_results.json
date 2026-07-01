@@ -1,0 +1,43 @@
+{
+  "precision_at_k": {
+    "1": 0.9,
+    "3": 0.3333,
+    "5": 0.2,
+    "10": 0.1
+  },
+  "recall_at_k": {
+    "1": 0.9,
+    "3": 1.0,
+    "5": 1.0,
+    "10": 1.0
+  },
+  "ndcg_at_k": {
+    "1": 0.9,
+    "3": 0.9631,
+    "5": 0.9631,
+    "10": 0.9631
+  },
+  "guardrail_precision": 0.0,
+  "guardrail_recall": 0.0,
+  "n_queries_evaluated": 30,
+  "config": {
+    "k_values": [
+      1,
+      3,
+      5,
+      10
+    ],
+    "n_queries": 50,
+    "guardrail_test_size": 30,
+    "out_of_domain_queries": [
+      "repare mon velo",
+      "quelle est la capitale de la France",
+      "recommande-moi un film",
+      "code un algorithme de tri",
+      "meteorologie de demain",
+      "recette de pizza italienne",
+      "commande un taxi",
+      "aide moi avec mes maths"
+    ]
+  }
+}
