@@ -23,16 +23,16 @@ Application de recommandation de cocktails utilisant **NLP semantique (SBERT)** 
 
 ```mermaid
 flowchart TB
-    Entry["app.py<br/>Streamlit · explorateur de similarité sémantique"]
-    Speak["src/app.py<br/>interface Speakeasy · questionnaire cocktails"]
-    Backend["src/backend.py<br/>RAG · guardrail 3 niveaux · génération"]
-    Embed["src/embeddings.py<br/>SBERT all-MiniLM-L6-v2 · FAISS IndexFlatIP"]
+    Entry["app.py<br/>Streamlit - explorateur de similarité sémantique"]
+    Speak["src/app.py<br/>interface Speakeasy - questionnaire cocktails"]
+    Backend["src/backend.py<br/>RAG - guardrail 3 niveaux - génération"]
+    Embed["src/embeddings.py<br/>SBERT all-MiniLM-L6-v2 - FAISS IndexFlatIP"]
     Profiler["src/ingredient_profiler.py<br/>profil gustatif des ingrédients"]
-    Utils["src/utils.py<br/>parsing · formatage des scores"]
-    Kaggle["src/kaggle_integration.py<br/>enrichissement dataset Kaggle · credentials gate"]
-    Data["data/<br/>cocktails.csv · known_ingredients.json"]
-    Gemini["Google Gemini<br/>génération de recette · mode fallback"]
-    Cache["cache SQLite<br/>data/recipe_cache.db · clé MD5 · persistant"]
+    Utils["src/utils.py<br/>parsing - formatage des scores"]
+    Kaggle["src/kaggle_integration.py<br/>enrichissement dataset Kaggle - credentials gate"]
+    Data["data/<br/>cocktails.csv - known_ingredients.json"]
+    Gemini["Google Gemini<br/>génération de recette - mode fallback"]
+    Cache["cache SQLite<br/>data/recipe_cache.db - clé MD5 - persistant"]
 
     Entry --> Embed
     Entry --> Utils
@@ -89,7 +89,7 @@ flowchart TB
 
 | Metric | Before (v2.x) | After (v3.0) | Delta |
 |--------|---------------|--------------|-------|
-| hit@5 (recherche SBERT) | 91.3% | 91.3% | — |
+| hit@5 (recherche SBERT) | 91.3% | 91.3% | - |
 | correct-refusal rate (guardrail) | 86.7% | **100.0%** | **+13.3%** |
 
 Détails complets : `reports/EVALUATION.md`
@@ -553,7 +553,7 @@ MIT
 ---
 
 <p align="center">
-  <sub>Par <a href="https://adam.beloucif.com">Adam Beloucif</a> · Data Engineer & Fullstack Developer · <a href="https://github.com/Adam-Blf">GitHub</a> · <a href="https://www.linkedin.com/in/adambeloucif/">LinkedIn</a></sub>
+  <sub>Par <a href="https://adam.beloucif.com">Adam Beloucif</a> - Data Engineer & Fullstack Developer - <a href="https://github.com/Adam-Blf">GitHub</a> - <a href="https://www.linkedin.com/in/adambeloucif/">LinkedIn</a></sub>
 </p>
 
 
