@@ -318,6 +318,11 @@ L'utilisateur te demande: "{query}"
 
 Cree une recette de cocktail unique et personnalisee basee sur cette demande.
 
+LANGUE: tout le texte destine a l'utilisateur (name, ingredients, instructions)
+doit etre ecrit en FRANCAIS, meme si la demande est formulee dans une autre
+langue. Traduis les noms d'ingredients (ex: "lime juice" -> "jus de citron vert").
+Les cles JSON restent en anglais.
+
 IMPORTANT: Reponds UNIQUEMENT avec un objet JSON valide (pas de texte avant ou apres).
 Structure exacte requise:
 {{
